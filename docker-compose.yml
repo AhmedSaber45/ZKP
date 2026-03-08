@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      # This links your physical 'database' folder to the container's '/app/database'
+      - ./database:/app/database
+    env_file:
+      - .env
+    environment:
+      # We tell the code to look here for the DB
+      - DB_PATH=/app/database/zkp_auth.db
+    restart: always
