@@ -11,9 +11,11 @@ from config import DB_PATH, SECRET_KEY
 from routes.auth_routes import auth_bp
 
 app = Flask(__name__)
+# session security cookies
 app.secret_key = SECRET_KEY
 
 # Enable CORS with proper configuration for development
+#Allows frontend to call backend.
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Add error handler to ensure CORS headers are sent on errors
