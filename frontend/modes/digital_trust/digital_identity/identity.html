@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Digital Identity</title>
+  <link rel="stylesheet" href="../../../assets/css/main.css">
+</head>
+<body>
+
+<div class="content">
+  <div class="card">
+    <h3>Digital Identity</h3>
+
+    <p><strong>User:</strong> <span id="userDisplay"></span></p>
+    <p><strong>Public Key:</strong> <span id="publicKey"></span></p>
+
+    <button onclick="generateProof()">Generate Identity Proof</button><br><br>
+
+    <textarea id="proof" rows="4" style="width:100%;" readonly></textarea>
+  </div>
+</div>
+
+<script src="../../../assets/js/api.js"></script>
+<script src="../../../assets/js/identity.js"></script>
+
+<script>
+document.getElementById("userDisplay").innerText =
+  localStorage.getItem("user");
+</script>
+
+</body>
+</html>
