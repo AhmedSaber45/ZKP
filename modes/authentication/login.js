@@ -1,14 +1,23 @@
-async function login() {
+async function login(event) {
+    AuthUI.preventEvent(event);
+    const logger = AuthUI.createMessageLogger("message");
 
-    const username = document.getElementById("username").value;
-    const secret = document.getElementById("secret").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    const proof = secret; // temporary (later ZKP)
+    logger.reset();
+    logger.append("Checking email and password.");
 
-    const result = await apiRequest("/auth/login", "POST", {
-        username: username,
-        proof: proof
+    if (!email || !password) {
+        logger.append("Email and password are required.", true);
+        return;
+    }
+
+    const result = await SRPAuth.login(email, password, {
+        onStep: logger.append
     });
 
-    alert(result.message);
+    if (result.status !== "success") {
+        logger.append(result.message || "Login failed.", true);
+    }
 }

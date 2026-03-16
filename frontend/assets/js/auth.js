@@ -1,34 +1,78 @@
-async function login() {
-  const username = document.getElementById("username").value;
-  const secret = document.getElementById("secret").value;
-
-  const response = await apiRequest("/login", "POST", {
-    username: username,
-    secret: secret
+function delay(milliseconds) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, milliseconds);
   });
+}
 
-  if (response.success) {
-    localStorage.setItem("user", username);
-    window.location.href = "dashboard.html";
-  } else {
-    document.getElementById("message").innerText = "Login Failed";
+async function login(event) {
+  AuthUI.preventEvent(event);
+  const logger = AuthUI.createMessageLogger("message");
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  logger.reset();
+  logger.append("Checking email and password.");
+
+  if (!email || !password) {
+    logger.append("Email and password are required.", true);
+    return;
   }
-}
-function generateKey(){
-  const randomKey = Math.random().toString(36).substring(2);
-  document.getElementById("publicKey").value = randomKey;
-}
 
-async function register(){
-  const username = document.getElementById("username").value;
-  const secret = document.getElementById("secret").value;
-  const publicKey = document.getElementById("publicKey").value;
-
-  const response = await apiRequest("/register","POST",{
-    username,
-    secret,
-    publicKey
+  const response = await SRPAuth.login(email, password, {
+    onStep: logger.append
   });
 
-  document.getElementById("message").innerText = response.message;
+  if (response.status === "success") {
+    logger.append("Redirecting to the dashboard.");
+    localStorage.setItem("user", email.trim().toLowerCase());
+    await delay(1200);
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  logger.append(response.message || "Login failed.", true);
+}
+
+async function register(event) {
+  AuthUI.preventEvent(event);
+  const logger = AuthUI.createMessageLogger("message");
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  logger.reset();
+  logger.append("Checking email and password.");
+
+  if (!email || !password) {
+    logger.append("Email and password are required.", true);
+    return;
+  }
+
+  logger.append("Checking whether this email is already registered.");
+  const checkResponse = await apiRequest("/auth/register/check", "POST", {
+    email: email.trim().toLowerCase()
+  });
+
+  if (checkResponse.status !== "success") {
+    logger.append(checkResponse.message || "Could not check email status.", true);
+    return;
+  }
+
+  if (checkResponse.registered) {
+    logger.append("Email already registered", true);
+    return;
+  }
+
+  const payload = await SRPAuth.buildRegistrationPayload(email, password, {
+    onStep: logger.append
+  });
+
+  logger.append("Sending email, salt, and verifier to the server.");
+  const response = await apiRequest("/auth/register", "POST", payload);
+
+  logger.append(
+    response.message || "Registration failed.",
+    response.status !== "success"
+  );
 }

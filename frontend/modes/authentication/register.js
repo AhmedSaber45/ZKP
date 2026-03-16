@@ -33,6 +33,7 @@ async function register(event) {
     });
 
     logger.append("Sending email, salt, and verifier to the server.");
+
     const result = await apiRequest("/auth/register", "POST", payload);
 
     logger.append(result.message || "Registration failed.", result.status !== "success");
