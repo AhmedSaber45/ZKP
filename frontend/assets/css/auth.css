@@ -1,0 +1,10 @@
+.auth-message-log {
+	display: block;
+	white-space: pre-line;
+	min-height: 7rem;
+	height: auto;
+}
+
+.auth-message-error {
+	color: #b42318;
+}

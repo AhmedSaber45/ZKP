@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZKP Secure Login</title>
   <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/auth.css">
   <script src="assets/js/layout.js"></script>
 </head>
 
@@ -28,12 +29,19 @@
       <div style="display: flex; flex-direction: column; gap: 1rem; text-align: left;">
         <div>
           <label
+            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem;">EMAIL</label>
+          <input id="email" type="email" placeholder="e.g. user@example.com" style="width:100%;">
             style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem;">USERNAME</label>
           <input id="username" type="text" placeholder="e.g. admin_01" style="width:100%;">
         </div>
 
         <div style="margin-bottom: 0.5rem;">
           <label
+            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem;">PASSWORD</label>
+          <input id="password" type="password" placeholder="••••••••" style="width:100%;">
+        </div>
+
+        <button type="button" onclick="event.preventDefault(); login(event); return false;" style="width:100%; margin-top: 0.5rem;">
             style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem;">SECRET
             KEY</label>
           <input id="secret" type="password" placeholder="••••••••" style="width:100%;">
@@ -49,6 +57,10 @@
         </button>
       </div>
 
+      <p id="message" class="auth-message-log" style="margin-top: 1.5rem; font-size: 0.85rem;"></p>
+
+      <div style="margin-top: 2rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+        <p style="font-size: 0.75rem;">Protected by Zero Knowledge Proofs and SRP challenge-response</p>
       <p id="message" style="margin-top: 1.5rem; font-size: 0.85rem; height: 20px;"></p>
 
       <div style="margin-top: 2rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
@@ -60,6 +72,8 @@
   <div id="footer-container"></div>
 
   <script src="assets/js/api.js"></script>
+  <script src="assets/js/srp.js"></script>
+  <script src="assets/js/auth_ui.js"></script>
   <script src="assets/js/auth.js"></script>
 </body>
 

@@ -1,4 +1,29 @@
 <!DOCTYPE html>
+<html>
+<head>
+  <title>Sign Message</title>
+  <link rel="stylesheet" href="../../../assets/css/main.css">
+  <script src="../../../assets/js/layout.js"></script>
+</head>
+<body>
+<div id="navbar-container"></div>
+<div id="sidebar-container"></div>
+<div class="content">
+  <div class="card">
+    <h3>Sign Message</h3>
+
+    <textarea id="message" rows="4" style="width:100%;"></textarea><br><br>
+    <button onclick="signMessage()">Sign</button><br><br>
+
+    <input id="signature" readonly style="width:100%;" placeholder="Signature">
+  </div>
+</div>
+<div id="footer-container"></div>
+
+
+<script src="../../../assets/js/api.js"></script>
+<script src="../../../assets/js/signature.js"></script>
+</body>
 <html lang="en">
 
 <head>
