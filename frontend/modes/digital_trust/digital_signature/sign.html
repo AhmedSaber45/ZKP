@@ -24,4 +24,71 @@
 <script src="../../../assets/js/api.js"></script>
 <script src="../../../assets/js/signature.js"></script>
 </body>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Signatures | ZKP Vault</title>
+    <link rel="stylesheet" href="../../../assets/css/main.css">
+    <script src="../../../assets/js/layout.js"></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+    <div id="sidebar-container"></div>
+
+    <div class="content animate-fade-in">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="color: var(--text-main);">Digital Signatures</h1>
+            <p>Sign and verify documents with total mathematical certainty</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <!-- Sign Card -->
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Create Signature</h3>
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div>
+                        <label
+                            style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">DOCUMENT
+                            HASH</label>
+                        <input id="doc-hash" type="text" placeholder="SHA-256 Hash..." style="width: 100%;">
+                    </div>
+                    <button style="width: 100%;">
+                        Generate Secure Signature
+                    </button>
+                    <div
+                        style="padding: 15px; background: rgba(255,255,255,0.02); border: 1px dashed var(--glass-border); border-radius: 12px; font-family: monospace; font-size: 0.75rem; color: var(--text-muted); word-break: break-all;">
+                        Sig: 0x82...f9a2 (Waiting for input)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verify Card -->
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Verify Integrity</h3>
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div>
+                        <label
+                            style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">SIGNATURE
+                            TO VERIFY</label>
+                        <input type="text" placeholder="0x..." style="width: 100%;">
+                    </div>
+                    <button style="width: 100%; background: var(--accent);">
+                        Check Authenticity
+                    </button>
+                    <div style="text-align: center; padding: 20px;">
+                        <p style="color: var(--text-muted); font-size: 0.85rem;">Status: <span
+                                style="font-weight: 800;">PENDING</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+    <script src="../../../assets/js/api.js"></script>
+</body>
+
 </html>

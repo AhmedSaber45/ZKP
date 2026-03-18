@@ -31,6 +31,8 @@
           <label
             style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem;">EMAIL</label>
           <input id="email" type="email" placeholder="e.g. user@example.com" style="width:100%;">
+            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem;">USERNAME</label>
+          <input id="username" type="text" placeholder="e.g. admin_01" style="width:100%;">
         </div>
 
         <div style="margin-bottom: 0.5rem;">
@@ -40,6 +42,12 @@
         </div>
 
         <button type="button" onclick="event.preventDefault(); login(event); return false;" style="width:100%; margin-top: 0.5rem;">
+            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem;">SECRET
+            KEY</label>
+          <input id="secret" type="password" placeholder="••••••••" style="width:100%;">
+        </div>
+
+        <button onclick="login()" style="width:100%; margin-top: 0.5rem;">
           Sign In
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
@@ -53,6 +61,10 @@
 
       <div style="margin-top: 2rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
         <p style="font-size: 0.75rem;">Protected by Zero Knowledge Proofs and SRP challenge-response</p>
+      <p id="message" style="margin-top: 1.5rem; font-size: 0.85rem; height: 20px;"></p>
+
+      <div style="margin-top: 2rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+        <p style="font-size: 0.75rem;">Protected by Zero Knowledge Proofs & AES-256</p>
       </div>
     </div>
   </div>
