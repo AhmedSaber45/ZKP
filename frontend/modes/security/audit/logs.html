@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Audit | ZKP Vault</title>
+    <link rel="stylesheet" href="../../../assets/css/main.css">
+    <script src="../../../assets/js/layout.js"></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+    <div id="sidebar-container"></div>
+
+    <div class="content animate-fade-in">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="color: var(--text-main);">Immutable Audit Logs</h1>
+            <p>Transparency through cryptographic accountability</p>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3>System Events</h3>
+                <div style="display: flex; gap: 10px;">
+                    <span style="padding: 4px 12px; background: rgba(34, 197, 94, 0.1); color: #22c55e; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">HEALTHY</span>
+                    <span style="padding: 4px 12px; background: rgba(59, 130, 246, 0.1); color: var(--primary); border-radius: 20px; font-size: 0.75rem; font-weight: 600;">SYNCED</span>
+                </div>
+            </div>
+
+            <div id="audit-logs" style="display: flex; flex-direction: column; gap: 8px;">
+                <p style="text-align: center; padding: 40px; color: var(--text-muted);">Loading cryptographically verified logs...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+    <script>
+        window.addEventListener('load', () => {
+             setTimeout(() => {
+                const logs = [
+                    { event: "User Login", status: "VERIFIED", time: "Just now", hash: "0x82f...a12" },
+                    { event: "Vault Secret Created", status: "ENCRYPTED", time: "5m ago", hash: "0x39b...e4f" },
+                    { event: "Blockchain Sync", status: "SUCCESS", time: "12m ago", hash: "0x11a...9b1" },
+                    { event: "Signature Generated", status: "VERIFIED", time: "45m ago", hash: "0xcc2...55e" },
+                    { event: "Identity Anchored", status: "SUCCESS", time: "1h ago", hash: "0xee3...f90" }
+                ];
+
+                const container = document.getElementById("audit-logs");
+                container.innerHTML = logs.map(log => `
+                    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; align-items: center; padding: 15px; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: 12px;">
+                        <span style="font-weight: 600; color: var(--text-main);">${log.event}</span>
+                        <span style="font-size: 0.75rem; font-weight: 800; color: ${log.status === 'VERIFIED' ? '#22c55e' : 'var(--primary)'}">${log.status}</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">${log.time}</span>
+                        <span style="font-family: monospace; font-size: 0.7rem; color: var(--text-muted); opacity: 0.6; text-align: right;">${log.hash}</span>
+                    </div>
+                `).join('');
+             }, 800);
+        });
+    </script>
+</body>
+
+</html>

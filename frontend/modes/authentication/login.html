@@ -1,23 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Login</title>
-    <link rel="stylesheet" href="../../assets/css/auth.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SRP Login | ZKP Vault</title>
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <script src="../../assets/js/layout.js"></script>
+  <style>
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - var(--navbar-height) - 80px);
+    }
+    
+    .auth-card {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .log-area {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius-md);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--glass-border);
+    }
+
+    .auth-message-log {
+      color: var(--text-muted);
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .auth-message-error {
+      color: #ef4444 !important;
+      font-weight: 600;
+    }
+
+    .step-indicator {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      justify-content: center;
+    }
+
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--glass-border);
+    }
+
+    .step-dot.active {
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary);
+    }
+  </style>
 </head>
+
 <body>
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
 
-<h2>ZKP Login</h2>
+  <div class="content animate-fade-in">
+    <div class="auth-container">
+      <div class="card auth-card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <div class="mode-icon" style="margin: 0 auto 1.5rem; width: 64px; height: 64px; background: rgba(59, 130, 246, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="M12 8v4"></path>
+              <path d="M12 16h.01"></path>
+            </svg>
+          </div>
+          <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">SRP Authentication</h2>
+          <p style="color: var(--text-muted);">Secure Login via Zero-Knowledge Proof</p>
+        </div>
 
-<input id="email" type="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <div>
+            <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Email Address</label>
+            <input id="email" type="email" placeholder="Enter your registered email">
+          </div>
 
-<button type="button" onclick="event.preventDefault(); login(event); return false;">Login</button>
-<p id="message" class="auth-message-log"></p>
+          <div>
+            <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Password</label>
+            <input id="password" type="password" placeholder="••••••••">
+          </div>
 
-<script src="../../assets/js/api.js"></script>
-<script src="../../assets/js/srp.js"></script>
-<script src="../../assets/js/auth_ui.js"></script>
-<script src="login.js"></script>
+          <button id="loginBtn" onclick="login(event)" style="width: 100%; justify-content: center; padding: 14px; margin-top: 0.5rem;">
+            Authenticate
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+          </button>
+        </div>
 
+        <div id="logArea" class="log-area" style="display: none;">
+          <p id="message" class="auth-message-log"></p>
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Don't have a secure identity? <a href="register.html" style="color: var(--primary); text-decoration: none; font-weight: 600;">Register here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/srp.js"></script>
+  <script src="../../assets/js/auth_ui.js"></script>
+  <script src="login.js"></script>
 </body>
+
 </html>

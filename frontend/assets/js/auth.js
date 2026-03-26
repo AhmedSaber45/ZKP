@@ -1,93 +1,24 @@
-function delay(milliseconds) {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, milliseconds);
-  });
-}
+// Central Authentication Logic for ZKP Secure Vault
 
-async function login(event) {
-  AuthUI.preventEvent(event);
-  const logger = AuthUI.createMessageLogger("message");
-
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  logger.reset();
-  logger.append("Checking email and password.");
-
-  if (!email || !password) {
-    logger.append("Email and password are required.", true);
-    return;
-  }
-
-  const response = await SRPAuth.login(email, password, {
-    onStep: logger.append
-  });
-
-  if (response.status === "success") {
-    logger.append("Redirecting to the dashboard.");
-    localStorage.setItem("user", email.trim().toLowerCase());
-    await delay(1200);
-    window.location.href = "dashboard.html";
-    return;
-  }
-
-  logger.append(response.message || "Login failed.", true);
-}
-
-async function register(event) {
-  AuthUI.preventEvent(event);
-  const logger = AuthUI.createMessageLogger("message");
-
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  logger.reset();
-  logger.append("Checking email and password.");
-
-  if (!email || !password) {
-    logger.append("Email and password are required.", true);
-    return;
-  }
-
-  logger.append("Checking whether this email is already registered.");
-  const checkResponse = await apiRequest("/auth/register/check", "POST", {
-    email: email.trim().toLowerCase()
-  });
-
-  if (checkResponse.status !== "success") {
-    logger.append(checkResponse.message || "Could not check email status.", true);
-    return;
-  }
-
-  if (checkResponse.registered) {
-    logger.append("Email already registered", true);
-    return;
-  }
-
-  const payload = await SRPAuth.buildRegistrationPayload(email, password, {
-    onStep: logger.append
-  });
-
-  logger.append("Sending email, salt, and verifier to the server.");
-  const response = await apiRequest("/auth/register", "POST", payload);
-
-  logger.append(
-    response.message || "Registration failed.",
-    response.status !== "success"
-  );
-}
+/**
+ * Handles the login process by sending credentials to the ZKP API.
+ * Redirects to the dashboard on success.
+ */
 async function login() {
+    const email = document.getElementById("email").value;
     const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
     const secret = document.getElementById("secret").value;
     const message = document.getElementById("message");
 
     if (!username || !secret) {
-        message.innerText = "Please fill in all fields";
+        message.innerText = "Error: Username and Secret Key are required.";
         message.style.color = "#ef4444";
         return;
     }
 
     try {
+        // We use the simplified login flow as per the current backend implementation
         const response = await fetch(`${API}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -98,18 +29,64 @@ async function login() {
 
         if (response.ok) {
             localStorage.setItem("user", username);
-            message.innerText = "Login Successful! Redirecting...";
+            message.innerText = "Access Granted. Redirecting to Vault...";
             message.style.color = "#22c55e";
+            
+            // Artificial delay for premium feel
             setTimeout(() => {
-                window.location.href = "dashboard.html";
+                window.location.href = "modes.html";
             }, 1000);
         } else {
-            message.innerText = data.error || "Login Failed";
+            message.innerText = data.error || "Authentication Failed";
             message.style.color = "#ef4444";
         }
     } catch (err) {
         console.error("Login error:", err);
-        message.innerText = "Server unreachable. Check backend.";
+        message.innerText = "Connection Error: Backend unreachable.";
+        message.style.color = "#ef4444";
+    }
+}
+
+/**
+ * Handles the registration process.
+ */
+async function register() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("message");
+
+    if (!email || !password) {
+        message.innerText = "Error: Email and Password are required.";
+        message.style.color = "#ef4444";
+        return;
+    }
+
+    try {
+        message.innerText = "Registering secure identity...";
+        message.style.color = "var(--primary)";
+
+        const response = await fetch(`${API}/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            message.innerText = "Registration Successful! You can now sign in.";
+            message.style.color = "#22c55e";
+            
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 2000);
+        } else {
+            message.innerText = data.error || "Registration Failed";
+            message.style.color = "#ef4444";
+        }
+    } catch (err) {
+        console.error("Registration error:", err);
+        message.innerText = "Connection Error: Backend unreachable.";
         message.style.color = "#ef4444";
     }
 }

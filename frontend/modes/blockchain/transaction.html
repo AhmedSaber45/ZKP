@@ -1,31 +1,4 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Blockchain</title>
-  <link rel="stylesheet" href="../../assets/css/main.css">
-</head>
-<body>
-
-<div class="navbar">Blockchain</div>
-
-<div class="content">
-
-  <div class="card">
-    <h3>Send Transaction</h3>
-
-    <input id="sender" placeholder="Sender"><br><br>
-    <input id="receiver" placeholder="Receiver"><br><br>
-    <input id="amount" type="number" placeholder="Amount"><br><br>
-
-    <button onclick="sendTransaction()">Send</button>
-  </div>
-
-</div>
-
-<script src="../../assets/js/api.js"></script>
-<script src="../../assets/js/blockchain.js"></script>
-
-</body>
 <html lang="en">
 
 <head>
@@ -113,7 +86,6 @@
         }
 
         async function sendTransaction() {
-            const receiver = document.getElementById("amount").value; // Wait, actually receiver id is receiver
             const rxVal = document.getElementById("receiver").value;
             const amtVal = document.getElementById("amount").value;
             const msg = document.getElementById("tx-message");

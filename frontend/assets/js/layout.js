@@ -1,49 +1,73 @@
-function getBasePath() {
-  // صفحة موجودة في /frontend/ => ""
-  // صفحة موجودة في /frontend/subfolder/ => "../"
-  const pathParts = window.location.pathname.split("/");
-  // افترض أن جميع الصفحات داخل frontend أو فولدرات فرعية مباشرة
-  const depth = pathParts.length - pathParts.indexOf("frontend") - 2;
-  return "../".repeat(depth);
-  const pathParts = window.location.pathname.split("/");
-  const depth = pathParts.length - pathParts.indexOf("frontend") - 2;
-  return "../".repeat(depth >= 0 ? depth : 0);
+function getRelativePrefix() {
+    const loc = window.location.pathname;
+    if (loc.includes('/modes/digital_trust/') || loc.includes('/modes/governance/secure_voting/') || loc.includes('/modes/security/')) return "../../../";
+    if (loc.includes('/modes/')) return "../../";
+    return "";
 }
 
 function loadComponent(id, file) {
-  const basePath = getBasePath();
-  fetch(basePath + file)
-    .then(res => res.text())
+  const prefix = getRelativePrefix();
+  console.log(`[Layout] Loading ${file} with prefix: ${prefix}`);
+  
+  fetch(prefix + file)
+    .then(res => {
+      if (!res.ok) throw new Error(`Could not load ${file}`);
+      return res.text();
+    })
     .then(data => {
-      document.getElementById(id).innerHTML = data;
       const container = document.getElementById(id);
       if (container) {
         container.innerHTML = data;
+        
+        // Fix relative links in the component
+        const links = container.querySelectorAll('a');
+        links.forEach(link => {
+            const originalHref = link.getAttribute('href');
+            if (originalHref && !originalHref.startsWith('http') && !originalHref.startsWith('#')) {
+                const newHref = prefix + originalHref;
+                link.setAttribute('href', newHref);
+            }
+        });
+
+        // Current page highlighting
+        const currentPath = window.location.pathname;
+        links.forEach(link => {
+            const linkHref = link.getAttribute('href');
+            // Clean paths for comparison
+            const cleanPath = currentPath.split('/').pop();
+            const cleanLink = linkHref.split('/').pop();
+            
+            if (cleanPath === cleanLink && cleanPath !== "" && cleanPath !== "index.html") {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+
+        // Special handling for navbar user display
+        if (id === "navbar-container") {
+          const user = localStorage.getItem("user");
+          const navUser = document.getElementById("navUser");
+          if (navUser && user) navUser.innerText = user;
+        }
       }
-    });
+    })
+    .catch(err => console.error("Component load error:", err));
 }
 
-window.onload = function () {
+window.addEventListener('load', () => {
   loadComponent("navbar-container", "components/navbar.html");
   loadComponent("sidebar-container", "components/sidebar.html");
   loadComponent("footer-container", "components/footer.html");
 
   const user = localStorage.getItem("user");
-  setTimeout(() => {
-    const navUser = document.getElementById("navUser");
-    if (navUser && user) {
-      navUser.innerText = user;
-    }
-  }, 200);
-    const welcomeUser = document.getElementById("welcomeUser");
-    if (navUser && user) navUser.innerText = user;
-    if (welcomeUser && user) welcomeUser.innerText = user;
-  }, 300);
-};
+  const welcomeUser = document.getElementById("welcomeUser");
+  if (welcomeUser && user) {
+    welcomeUser.innerText = user;
+  }
+});
 
 function logout() {
   localStorage.clear();
-  window.location.href = "index.html";
-}
-  window.location.href = getBasePath() + "index.html";
+  window.location.href = getRelativePrefix() + "index.html";
 }

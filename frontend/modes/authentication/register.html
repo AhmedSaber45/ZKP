@@ -1,26 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Register</title>
-    <link rel="stylesheet" href="../../assets/css/auth.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SRP Register | ZKP Vault</title>
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <script src="../../assets/js/layout.js"></script>
+  <style>
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - var(--navbar-height) - 80px);
+    }
+    
+    .auth-card {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .log-area {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius-md);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--glass-border);
+    }
+
+    .auth-message-log {
+      color: var(--text-muted);
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .auth-message-error {
+      color: #ef4444 !important;
+      font-weight: 600;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
 
-<h2>Register</h2>
+  <div class="content animate-fade-in">
+    <div class="auth-container">
+      <div class="card auth-card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <div class="mode-icon" style="margin: 0 auto 1.5rem; width: 64px; height: 64px; background: rgba(59, 130, 246, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+              <polyline points="16 11 18 13 22 9"></polyline>
+            </svg>
+          </div>
+          <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Secure Registration</h2>
+          <p style="color: var(--text-muted);">Initialize your Zero-Knowledge Identity</p>
+        </div>
 
-<input id="email" type="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <div>
+            <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Email Address</label>
+            <input id="email" type="email" placeholder="e.g. user@vault.secure">
+          </div>
 
-<button type="button" onclick="event.preventDefault(); register(event); return false;">Register</button>
-<p id="message" class="auth-message-log"></p>
+          <div>
+            <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Generate Secure Password</label>
+            <input id="password" type="password" placeholder="••••••••">
+            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem;">Your password is never sent to the server. Only a cryptographic verifier will be stored.</p>
+          </div>
 
-<script src="../../assets/js/api.js"></script>
-<script src="../../assets/js/srp.js"></script>
-<script src="../../assets/js/auth_ui.js"></script>
-<script src="register.js"></script>
+          <button id="registerBtn" onclick="register(event)" style="width: 100%; justify-content: center; padding: 14px; margin-top: 0.5rem;">
+            Create Secure Identity
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path>
+              <path d="M12 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
 
+        <div id="logArea" class="log-area" style="display: none;">
+          <p id="message" class="auth-message-log"></p>
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Already have an identity? <a href="login.html" style="color: var(--primary); text-decoration: none; font-weight: 600;">Sign In</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/srp.js"></script>
+  <script src="../../assets/js/auth_ui.js"></script>
+  <script src="register.js"></script>
 </body>
 
 </html>
