@@ -48,11 +48,11 @@
 
                 const container = document.getElementById("audit-logs");
                 container.innerHTML = logs.map(log => `
-                    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; align-items: center; padding: 15px; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: 12px;">
+                    <div class="audit-log-item" style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; align-items: center; padding: 15px; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: 12px; gap: 10px;">
                         <span style="font-weight: 600; color: var(--text-main);">${log.event}</span>
                         <span style="font-size: 0.75rem; font-weight: 800; color: ${log.status === 'VERIFIED' ? '#22c55e' : 'var(--primary)'}">${log.status}</span>
                         <span style="font-size: 0.75rem; color: var(--text-muted);">${log.time}</span>
-                        <span style="font-family: monospace; font-size: 0.7rem; color: var(--text-muted); opacity: 0.6; text-align: right;">${log.hash}</span>
+                        <span class="hash-text" style="font-family: monospace; font-size: 0.7rem; color: var(--text-muted); opacity: 0.6; text-align: right;">${log.hash}</span>
                     </div>
                 `).join('');
              }, 800);

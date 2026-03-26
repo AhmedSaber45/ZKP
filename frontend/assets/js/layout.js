@@ -27,6 +27,13 @@ function loadComponent(id, file) {
                 const newHref = prefix + originalHref;
                 link.setAttribute('href', newHref);
             }
+            
+            // Close sidebar when a link is clicked (mobile)
+            link.addEventListener('click', () => {
+              if (window.innerWidth <= 768) {
+                closeSidebar();
+              }
+            });
         });
 
         // Current page highlighting
@@ -65,9 +72,74 @@ window.addEventListener('load', () => {
   if (welcomeUser && user) {
     welcomeUser.innerText = user;
   }
+  
+  // Create backdrop if it doesn't exist
+  if (!document.querySelector('.sidebar-backdrop')) {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'sidebar-backdrop';
+    backdrop.onclick = toggleSidebar;
+    document.body.appendChild(backdrop);
+  }
 });
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const backdrop = document.querySelector('.sidebar-backdrop');
+  if (sidebar) {
+    sidebar.classList.toggle('open');
+    if (backdrop) {
+      backdrop.classList.toggle('active');
+    }
+    // Toggle body scroll
+    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+  }
+}
+
+function closeSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const backdrop = document.querySelector('.sidebar-backdrop');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
+    if (backdrop) {
+      backdrop.classList.remove('active');
+    }
+    document.body.style.overflow = '';
+  }
+}
 
 function logout() {
   localStorage.clear();
   window.location.href = getRelativePrefix() + "index.html";
 }
+
+// --- Navbar Hide on Scroll ---
+(function() {
+    let lastScrollTop = 0;
+    const threshold = 5;
+    
+    function handleScroll() {
+        const navbar = document.querySelector('.navbar');
+        if (!navbar) return;
+
+        // Current scroll position
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        const st = Math.max(currentScroll, 0);
+
+        // Check if we've scrolled enough to matter
+        if (Math.abs(lastScrollTop - st) <= threshold) return;
+
+        // Hide if scrolling down and past navbar height
+        if (st > lastScrollTop && st > 80) {
+            navbar.classList.add('nav-hidden');
+        } else {
+            // Show if scrolling up
+            navbar.classList.remove('nav-hidden');
+        }
+
+        lastScrollTop = st;
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+})();
+
+
