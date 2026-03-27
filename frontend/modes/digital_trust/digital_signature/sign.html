@@ -1,27 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <title>Sign Message</title>
-  <link rel="stylesheet" href="../../../assets/css/main.css">
-  <script src="../../../assets/js/layout.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Signatures | ZKP Vault</title>
+    <link rel="stylesheet" href="../../../assets/css/main.css">
+    <script src="../../../assets/js/layout.js"></script>
 </head>
+
 <body>
-<div id="navbar-container"></div>
-<div id="sidebar-container"></div>
-<div class="content">
-  <div class="card">
-    <h3>Sign Message</h3>
+    <div id="navbar-container"></div>
+    <div id="sidebar-container"></div>
 
-    <textarea id="message" rows="4" style="width:100%;"></textarea><br><br>
-    <button onclick="signMessage()">Sign</button><br><br>
+    <div class="content animate-fade-in">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="color: var(--text-main);">Digital Signatures</h1>
+            <p>Sign and verify documents with total mathematical certainty</p>
+        </div>
 
-    <input id="signature" readonly style="width:100%;" placeholder="Signature">
-  </div>
-</div>
-<div id="footer-container"></div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+            <!-- Sign Card -->
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Create Signature</h3>
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div>
+                        <label
+                            style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">MESSAGE
+                            TO SIGN</label>
+                        <textarea id="message" rows="4" placeholder="Enter message here..."></textarea>
+                    </div>
+                    <button onclick="signMessage()" style="width: 100%;">
+                        Generate Secure Signature
+                    </button>
+                    <div id="sig-display"
+                        style="padding: 15px; background: rgba(255,255,255,0.02); border: 1px dashed var(--glass-border); border-radius: 12px; font-family: monospace; font-size: 0.75rem; color: var(--text-muted); word-break: break-all; min-height: 50px;">
+                        Sig: (Waiting for input)
+                    </div>
+                </div>
+            </div>
 
+            <!-- Verify Card -->
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Verify Integrity</h3>
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div>
+                        <label
+                            style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">MESSAGE</label>
+                        <textarea id="v-message" rows="2" placeholder="Enter message here..."></textarea>
+                    </div>
+                    <div>
+                        <label
+                            style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">SIGNATURE
+                            TO VERIFY</label>
+                        <input id="signature" type="text" placeholder="0x..." style="width: 100%;">
+                    </div>
+                    <button onclick="verifySignature()" style="width: 100%; background: var(--accent);">
+                        Check Authenticity
+                    </button>
+                    <div style="text-align: center; padding: 10px;">
+                        <p id="verify-status" style="color: var(--text-muted); font-size: 0.85rem;">Status: <span
+                                style="font-weight: 800;">PENDING</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<script src="../../../assets/js/api.js"></script>
-<script src="../../../assets/js/signature.js"></script>
+    <div id="footer-container"></div>
+    <script src="../../../assets/js/api.js"></script>
+    <script>
+        async function signMessage() {
+            const message = document.getElementById("message").value;
+            const display = document.getElementById("sig-display");
+
+            if (!message) {
+                display.innerText = "Error: Message is empty";
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/signatures/sign`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    display.innerText = `Sig: ${data.signature}`;
+                    display.style.color = "var(--primary)";
+                } else {
+                    display.innerText = "Error: Signing failed";
+                }
+            } catch (err) {
+                display.innerText = "Error: Server unreachable";
+            }
+        }
+
+        async function verifySignature() {
+            const message = document.getElementById("v-message").value;
+            const signature = document.getElementById("signature").value;
+            const status = document.getElementById("verify-status");
+
+            if (!message || !signature) {
+                status.innerHTML = 'Status: <span style="color: #ef4444;">MISSING DATA</span>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/signatures/verify`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message, signature })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.valid) {
+                    status.innerHTML = 'Status: <span style="color: #22c55e;">VALID SIGNATURE</span>';
+                } else {
+                    status.innerHTML = 'Status: <span style="color: #ef4444;">INVALID SIGNATURE</span>';
+                }
+            } catch (err) {
+                status.innerHTML = 'Status: <span style="color: #ef4444;">SERVER ERROR</span>';
+            }
+        }
+    </script>
 </body>
+
 </html>
