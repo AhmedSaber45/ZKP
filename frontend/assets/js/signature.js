@@ -1,17 +1,53 @@
 async function signMessage(){
-  const message = document.getElementById("message").value;
 
-  const response = await apiRequest("/sign","POST",{message});
+let message = document.getElementById("message").value;
 
-  document.getElementById("signature").value = response.signature;
+let response = await fetch("/signature/sign", {
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+message: message
+})
+
+})
+
+let data = await response.json();
+
+document.getElementById("signature").value = data.signature;
+
 }
 
+
+
 async function verifySignature(){
-  const message = document.getElementById("message").value;
-  const signature = document.getElementById("signature").value;
 
-  const response = await apiRequest("/verify","POST",{message,signature});
+let message = document.getElementById("message").value;
 
-  document.getElementById("result").innerText =
-    response.valid ? "Verified ✅" : "Invalid ❌";
+let signature = document.getElementById("signature").value;
+
+let response = await fetch("/signature/verify", {
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+message: message,
+signature: signature
+})
+
+})
+
+let data = await response.json();
+
+document.getElementById("result").innerText =
+data.valid ? "Valid Signature ✅" : "Invalid Signature ❌";
+
 }

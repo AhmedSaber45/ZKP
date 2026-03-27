@@ -1,7 +1,23 @@
 async function generateProof(){
-  const username = localStorage.getItem("user");
 
-  const response = await apiRequest("/identity-proof","POST",{username});
+let username = localStorage.getItem("user");
 
-  document.getElementById("proof").value = response.proof;
+let response = await fetch("/identity/generate_proof", {
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+username: username
+})
+
+})
+
+let data = await response.json();
+
+document.getElementById("proof").value = data.proof;
+
 }
