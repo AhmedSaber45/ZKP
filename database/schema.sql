@@ -1,7 +1,10 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    hashed_secret TEXT
+    username TEXT UNIQUE,
+    public_key INTEGER,
+    email TEXT UNIQUE,
+    salt TEXT,
+    verifier TEXT
 );
 
 CREATE TABLE IF NOT EXISTS transactions (
