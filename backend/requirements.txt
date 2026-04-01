@@ -1,14 +1,17 @@
 # Web Framework & Server
-Flask==3.0.0
+Flask==3.0.3
 gunicorn==21.2.0
+flask-cors==4.0.0
 
 # Security & Cryptography (Common for ZKP)
 pycryptodome      # Provides AES, RSA, ECC, etc.
-hashlib           # Usually built-in, but ensure it's accessible
+#hashlib           # Usually built-in, but ensure it's accessible
 ecdsa             # Elliptic Curve Digital Signature Algorithm
 
 # Testing (Good practice for engineering projects)
 pytest==7.4.0
 
 # Cross-Origin Resource Sharing (If your frontend is separate)
-flask-cors
+
+
+psycopg2-binary==2.9.9

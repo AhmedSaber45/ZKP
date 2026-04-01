@@ -2,6 +2,9 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 import sys
 import os
+import logging
+logging.basicConfig(level=logging.DEBUG)
+from werkzeug.exceptions import HTTPException
 
 # Add backend directory to path
 sys.path.insert(0, os.path.dirname(__file__))
@@ -18,13 +21,21 @@ app.secret_key = SECRET_KEY
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Add error handler to ensure CORS headers are sent on errors
-@app.errorhandler(Exception)
-def handle_error(error):
-    print(f"Error occurred: {error}")
-    return jsonify({"status": "error", "message": str(error)}), 500
+#@app.errorhandler(Exception)
+#def handle_error(error):
+ #   print(f"Error occurred: {error}")
+  #  return jsonify({"status": "error", "message": str(error)}), 500
+@app.errorhandler(HTTPException)
+def handle_http_error(error):
+    return jsonify({
+        "status": "error",
+        "code": error.code,
+        "message": error.description
+    }), error.code
 
 @app.route('/')
 def home():
+    print("🔥 REQUEST RECEIVED")
     return jsonify({"message": "ZKP Backend API Running", "status": "Secure"})
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
