@@ -36,18 +36,38 @@ function loadComponent(id, file) {
             });
         });
 
-        // Current page highlighting
+        // Current page highlighting and sub-menu expansion
         const currentPath = window.location.pathname;
+        const cleanPath = currentPath.split('/').pop().replace('.html', '');
+
         links.forEach(link => {
             const linkHref = link.getAttribute('href');
-            // Clean paths for comparison
-            const cleanPath = currentPath.split('/').pop();
-            const cleanLink = linkHref.split('/').pop();
+            if (!linkHref) return;
             
-            if (cleanPath === cleanLink && cleanPath !== "" && cleanPath !== "index.html") {
+            const cleanLink = linkHref.split('/').pop().replace('.html', '');
+            
+            // Exact match for active state
+            if (cleanPath === cleanLink && cleanPath !== "" && cleanPath !== "index") {
                 link.classList.add('active');
+                
+                // If this is a sub-menu item, expand the parent
+                const subMenu = link.closest('.sub-menu');
+                if (subMenu) {
+                    subMenu.parentElement.classList.add('expanded');
+                }
             } else {
                 link.classList.remove('active');
+            }
+
+            // Handle Sub-menu Toggle
+            if (link.classList.contains('has-submenu')) {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent jump for parent items
+                    const wrapper = link.closest('.menu-item-wrapper');
+                    if (wrapper) {
+                        wrapper.classList.toggle('expanded');
+                    }
+                });
             }
         });
 

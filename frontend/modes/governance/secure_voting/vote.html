@@ -26,10 +26,18 @@
                 <p style="margin-bottom: 1rem; color: var(--text-muted);">Select your preferred choice. Your identity
                     remains protected by Zero Knowledge Proofs.</p>
 
-                <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
+                <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                    <!-- Voter Info -->
+                    <div style="display: flex; gap: 1rem;">
+                        <input id="voter-id-input" type="text" placeholder="Voter ID" class="glass" 
+                            style="flex: 2; padding: 12px; border-radius: 8px; font-size: 0.85rem;" />
+                        <input id="voter-secret-input" type="password" placeholder="Key (1-21)" class="glass" 
+                            style="flex: 1; padding: 12px; border-radius: 8px; font-size: 0.85rem;" />
+                    </div>
+
                     <label class="glass"
                         style="display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 12px; cursor: pointer;">
-                        <input type="radio" name="choice" value="Option A" style="width: auto;">
+                        <input type="radio" name="choice" value="Proposal #101" style="width: auto;">
                         <div>
                             <p style="color: var(--text-main); font-weight: 600;">Proposal #101: Network Expansion</p>
                             <p style="font-size: 0.75rem;">Support the upgrade of node infrastructure.</p>
@@ -38,14 +46,14 @@
 
                     <label class="glass"
                         style="display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 12px; cursor: pointer;">
-                        <input type="radio" name="choice" value="Option B" style="width: auto;">
+                        <input type="radio" name="choice" value="Proposal #102" style="width: auto;">
                         <div>
                             <p style="color: var(--text-main); font-weight: 600;">Proposal #102: Protocol Adjustment</p>
                             <p style="font-size: 0.75rem;">Modify the verification timeout parameters.</p>
                         </div>
                     </label>
 
-                    <button onclick="castVote()" style="width:100%; margin-top: 1rem;">
+                    <button id="vote-btn" onclick="castSecureVote()" style="width:100%; margin-top: 1rem;">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -53,14 +61,14 @@
                         </svg>
                         Submit Secure Ballot
                     </button>
-                    <p id="vote-message" style="text-align: center; height: 20px; font-size: 0.85rem;"></p>
+                    <p id="vote-message" style="text-align: center; height: 20px; font-size: 0.85rem; font-weight: 500;"></p>
                 </div>
             </div>
 
             <!-- Results Card -->
             <div class="card">
                 <h3 style="margin-bottom: 1.5rem;">Current Standings</h3>
-                <div id="vote-results" style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem;">
+                <div id="vote-results" style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1rem;">
                     <p style="text-align: center; padding: 40px; color: var(--text-muted);">Loading live results...</p>
                 </div>
             </div>
@@ -70,32 +78,46 @@
     <div id="footer-container"></div>
 
     <script src="../../../assets/js/api.js"></script>
+    <script src="voting.js"></script>
     <script>
+        // Use pre-populated user from localStorage if possible
+        const user = localStorage.getItem("user") || "zkp_voter_" + Math.random().toString(36).substr(2, 4);
+        const voterIdInput = document.getElementById("voter-id-input");
+        if (voterIdInput) voterIdInput.value = user;
+
         async function fetchResults() {
             try {
                 const res = await fetch(`${API}/voting/results`);
-                const data = await res.json();
+                const json = await res.json();
                 const container = document.getElementById("vote-results");
 
-                if (data.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">No ballots cast yet.</p>';
+                if (json.status !== "success") {
+                    container.innerHTML = `<p style="text-align: center; color: var(--text-muted);">${json.message || "Error loading results."}</p>`;
                     return;
                 }
 
-                const total = data.reduce((acc, curr) => acc + curr.count, 0);
+                const data = json.data; // Now a dict { "choice": count }
+                const entries = Object.entries(data);
 
-                container.innerHTML = data.map(res => {
-                    const pct = ((res.count / total) * 100).toFixed(1);
+                if (entries.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 20px;">No verified ballots yet.</p>';
+                    return;
+                }
+
+                const total = entries.reduce((acc, [_, count]) => acc + count, 0);
+
+                container.innerHTML = entries.map(([choice, count]) => {
+                    const pct = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
                     return `
                         <div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="font-size: 0.85rem; font-weight: 600;">${res.choice}</span>
+                                <span style="font-size: 0.85rem; font-weight: 600;">${choice}</span>
                                 <span style="font-size: 0.85rem; color: var(--primary);">${pct}%</span>
                             </div>
                             <div style="height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden;">
-                                <div style="width: ${pct}%; height: 100%; background: var(--primary); box-shadow: 0 0 10px var(--primary);"></div>
+                                <div style="width: ${pct}%; height: 100%; background: var(--primary); box-shadow: 0 0 10px var(--primary); transition: width 0.3s ease-out;"></div>
                             </div>
-                            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">${res.count} verified ballots</p>
+                            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">${count} verified ballots</p>
                         </div>
                     `;
                 }).join('');
@@ -103,40 +125,8 @@
                 console.error(err);
             }
         }
-
-        async function castVote() {
-            const selected = document.querySelector('input[name="choice"]:checked');
-            const msg = document.getElementById("vote-message");
-            const voter_id = localStorage.getItem("user") || "anonymous_" + Math.random().toString(36).substr(2, 5);
-
-            if (!selected) {
-                msg.innerText = "Please select an option first";
-                msg.style.color = "#ef4444";
-                return;
-            }
-
-            try {
-                const res = await fetch(`${API}/voting/vote`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ voter_id, choice: selected.value })
-                });
-
-                if (res.ok) {
-                    msg.innerText = "Vote successfully encrypted and cast!";
-                    msg.style.color = "#22c55e";
-                    fetchResults();
-                } else {
-                    msg.innerText = "Voting error. Please try again.";
-                    msg.style.color = "#ef4444";
-                }
-            } catch (err) {
-                msg.innerText = "Network Error";
-            }
-        }
-
         window.addEventListener('load', fetchResults);
     </script>
 </body>
 
-</html>
+</html>

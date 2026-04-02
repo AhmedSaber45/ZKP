@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Information</title>
+    <style>
+        :root {
+            --bg: #f4f6fb;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --line: #e5e7eb;
+            --accent: #1d4ed8;
+            --accent-soft: #dbeafe;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 40%);
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 16px 48px;
+        }
+
+        .header {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+            font-size: 1.5rem;
+        }
+
+        .header p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .candidate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .candidate-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .candidate-card h2 {
+            margin: 0 0 6px;
+            font-size: 1.15rem;
+        }
+
+        .candidate-card p {
+            margin: 0 0 12px;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .candidate-card ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .candidate-card li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            color: var(--text);
+            text-decoration: none;
+            background: var(--card);
+            font-weight: 600;
+        }
+
+        .btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="header">
+            <h1>Candidate Information</h1>
+            <p>Review candidate profiles and policy priorities before casting your secure vote.</p>
+        </section>
+
+        <section class="candidate-grid" aria-label="Candidate list">
+            <article class="candidate-card">
+                <span class="badge">Candidate A</span>
+                <h2>Lina Farouk</h2>
+                <p>Focuses on infrastructure resilience, node expansion, and transparent governance reporting.</p>
+                <ul>
+                    <li>Expands regional node infrastructure for better uptime and decentralization.</li>
+                    <li>Publishes quarterly technical accountability reports.</li>
+                    <li>Introduces a public incident-response dashboard.</li>
+                </ul>
+            </article>
+
+            <article class="candidate-card">
+                <span class="badge">Candidate B</span>
+                <h2>Karim Nasser</h2>
+                <p>Prioritizes protocol optimization, faster verification cycles, and lower operational costs.</p>
+                <ul>
+                    <li>Optimizes proof verification timeout parameters.</li>
+                    <li>Reduces processing overhead with scheduler improvements.</li>
+                    <li>Launches a monthly open technical Q and A session.</li>
+                </ul>
+            </article>
+        </section>
+
+        <div class="actions">
+            <a class="btn primary" href="vote.html">Back to Voting</a>
+            <a class="btn" href="results.html">View Results</a>
+        </div>
+    </main>
+</body>
+</html>
