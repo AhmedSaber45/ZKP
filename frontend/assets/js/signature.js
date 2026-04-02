@@ -1,53 +1,82 @@
 async function signMessage(){
 
-let message = document.getElementById("message").value;
+const message =
+document.getElementById("message").value;
 
-let response = await fetch("/signature/sign", {
+if(!message){
 
-method:"POST",
+alert("Enter message first");
 
-headers:{
-"Content-Type":"application/json"
-},
+return;
 
-body: JSON.stringify({
-message: message
-})
+}
 
-})
+const private_key =
+localStorage.getItem("private_key");
 
-let data = await response.json();
+if(!private_key){
 
-document.getElementById("signature").value = data.signature;
+alert("Register identity first");
+
+return;
+
+}
+
+const result =
+await apiRequest(
+"/sign",
+"POST",
+{
+message,
+private_key
+}
+);
+
+document.getElementById(
+"status"
+).innerText =
+"Signature generated successfully ✅";
+
+alert(result.signature);
 
 }
 
 
-
 async function verifySignature(){
 
-let message = document.getElementById("message").value;
+const message =
+document.getElementById("message").value;
 
-let signature = document.getElementById("signature").value;
+const signature =
+document.getElementById("signature").value;
 
-let response = await fetch("/signature/verify", {
+const public_key =
+localStorage.getItem("public_key");
 
-method:"POST",
+if(!public_key){
 
-headers:{
-"Content-Type":"application/json"
-},
+alert("Register identity first");
 
-body: JSON.stringify({
-message: message,
-signature: signature
-})
+return;
 
-})
+}
 
-let data = await response.json();
+const result =
+await apiRequest(
+"/verify",
+"POST",
+{
+message,
+signature,
+public_key
+}
+);
 
-document.getElementById("result").innerText =
-data.valid ? "Valid Signature ✅" : "Invalid Signature ❌";
+document.getElementById(
+"status"
+).innerText =
+result.valid
+? "Signature Valid ✅"
+: "Signature Invalid ❌";
 
 }

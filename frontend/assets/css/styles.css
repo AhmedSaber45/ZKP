@@ -1,0 +1,280 @@
+/* Reset */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* Page Background */
+
+body {
+
+    font-family: Arial, sans-serif;
+
+    background: linear-gradient(
+        135deg,
+        #0f2027,
+        #203a43,
+        #2c5364
+    );
+
+    height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+/* Container Card */
+
+.container {
+
+    background: white;
+
+    padding: 40px;
+
+    border-radius: 12px;
+
+    width: 420px;
+
+    box-shadow:
+
+        0px 10px 25px rgba(0,0,0,0.3);
+
+}
+
+
+/* Title */
+
+h2 {
+
+    text-align: center;
+
+    margin-bottom: 25px;
+
+    color: #203a43;
+
+}
+
+
+/* Input Fields */
+
+input,
+textarea {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin-top: 10px;
+
+    margin-bottom: 20px;
+
+    border-radius: 6px;
+
+    border: 1px solid #ccc;
+
+    font-size: 15px;
+
+}
+
+
+/* Buttons */
+
+button {
+
+    width: 100%;
+
+    padding: 12px;
+
+    background: #203a43;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 6px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+
+button:hover {
+
+    background: #2c5364;
+
+}
+
+
+/* Status Message */
+
+.status {
+
+    text-align: center;
+
+    margin-top: 15px;
+
+    font-weight: bold;
+
+}
+
+
+/* Success Message */
+
+.success {
+
+    color: green;
+
+}
+
+
+/* Error Message */
+
+.error {
+
+    color: red;
+
+}
+/* Reset */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* Page Background */
+
+body {
+
+    font-family: Arial, sans-serif;
+
+    background: linear-gradient(
+        135deg,
+        #0f2027,
+        #203a43,
+        #2c5364
+    );
+
+    height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+/* Container Card */
+
+.container {
+
+    background: white;
+
+    padding: 40px;
+
+    border-radius: 12px;
+
+    width: 420px;
+
+    box-shadow:
+
+        0px 10px 25px rgba(0,0,0,0.3);
+
+}
+
+
+/* Title */
+
+h2 {
+
+    text-align: center;
+
+    margin-bottom: 25px;
+
+    color: #203a43;
+
+}
+
+
+/* Input Fields */
+
+input,
+textarea {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin-top: 10px;
+
+    margin-bottom: 20px;
+
+    border-radius: 6px;
+
+    border: 1px solid #ccc;
+
+    font-size: 15px;
+
+}
+
+
+/* Buttons */
+
+button {
+
+    width: 100%;
+
+    padding: 12px;
+
+    background: #203a43;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 6px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+
+button:hover {
+
+    background: #2c5364;
+
+}
+
+
+/* Status Message */
+
+.status {
+
+    text-align: center;
+
+    margin-top: 15px;
+
+    font-weight: bold;
+
+}
+
+

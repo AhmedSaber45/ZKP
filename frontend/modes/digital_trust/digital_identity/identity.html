@@ -1,31 +1,62 @@
 <!DOCTYPE html>
+
 <html>
+
 <head>
-  <title>Digital Identity</title>
-  <link rel="stylesheet" href="../../../assets/css/main.css">
+
+<link rel="stylesheet" href="../../../assets/css/styles.css">
+
+<script src="../../../assets/js/api.js" ></script>
+<script src="../../../assets/js/identity.js" ></script>
+
 </head>
+
 <body>
 
-<div class="content">
-  <div class="card">
-    <h3>Digital Identity</h3>
+<div class="container">
 
-    <p><strong>User:</strong> <span id="userDisplay"></span></p>
-    <p><strong>Public Key:</strong> <span id="publicKey"></span></p>
+<h2>Register Digital Identity</h2>
 
-    <button onclick="generateProof()">Generate Identity Proof</button><br><br>
+<input
+id="identity"
+placeholder="Enter identity"
+/>
 
-    <textarea id="proof" rows="4" style="width:100%;" readonly></textarea>
-  </div>
+<button onclick="registerIdentity()">
+
+Register Identity
+
+</button>
+
+<p
+id="status"
+class="status"
+></p>
+<a href="../digital_signature/sign.html">Go to Sign Page →</a>
 </div>
 
-<script src="../../../assets/js/api.js"></script>
-<script src="../../../assets/js/identity.js"></script>
-
 <script>
-document.getElementById("userDisplay").innerText =
-  localStorage.getItem("user");
+
+async function registerIdentity() {
+
+    const identity = document.getElementById("identity").value;
+
+    const result = await apiRequest(
+        "/identity/register", // ✅ fixed endpoint
+        "POST",
+        { email: identity }   // ⚠ backend expects field "email"
+    );
+
+    // store keys locally
+    localStorage.setItem("private_key", result.private_key);
+    localStorage.setItem("public_key", result.public_key);
+
+    document.getElementById("status").innerHTML =
+        "Identity Registered Successfully ✅";
+}
+
 </script>
 
 </body>
+
 </html>

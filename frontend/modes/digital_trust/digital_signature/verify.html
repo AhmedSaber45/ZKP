@@ -1,25 +1,79 @@
 <!DOCTYPE html>
+
 <html>
+
 <head>
-  <title>Verify Signature</title>
-  <link rel="stylesheet" href="../../../assets/css/main.css">
-</head>
-<body>
 
-<div class="content">
-  <div class="card">
-    <h3>Verify Signature</h3>
-
-    <textarea id="message" rows="4" style="width:100%;"></textarea><br><br>
-    <input id="signature" placeholder="Signature" style="width:100%;"><br><br>
-
-    <button onclick="verifySignature()">Verify</button>
-
-    <p id="result"></p>
-  </div>
-</div>
+<link rel="stylesheet" href="../../../assets/css/styles.css">
 
 <script src="../../../assets/js/api.js"></script>
 <script src="../../../assets/js/signature.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Verify Signature</h2>
+
+<textarea
+id="message"
+placeholder="Enter message"
+></textarea>
+
+<input
+id="signature"
+placeholder="Paste signature"
+/>
+
+<button onclick="verifySignature()">
+
+Verify Signature
+
+</button>
+
+<p
+id="status"
+class="status"
+></p>
+<div id="verificationResult"></div>
+
+</div>
+
+<script>
+
+async function verifySignature(){
+
+const message =
+document.getElementById("message").value;
+
+const signature =
+document.getElementById("signature").value;
+
+const result =
+await apiRequest(
+"/signature/verify",
+"POST",
+{
+message,
+signature,
+public_key:
+localStorage.public_key
+}
+);
+
+document.getElementById(
+"status"
+).innerHTML =
+result.valid
+? "Signature Valid ✅"
+: "Signature Invalid ❌";
+
+}
+
+</script>
+
 </body>
+
 </html>

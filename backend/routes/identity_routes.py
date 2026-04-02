@@ -1,18 +1,31 @@
 from flask import Blueprint, request, jsonify
-from services.identity_service import generate_identity_proof
 
-identity_bp = Blueprint("identity", __name__)
+from services.identity_service import register_identity
+from database import get_connection
+
+identity_routes = Blueprint("identity_routes", __name__)
 
 
-@identity_bp.route("/generate_proof", methods=["POST"])
-def generate_proof():
+@identity_routes.route("/identity/register", methods=["POST"])
+def register():
 
     data = request.json
 
-    username = data.get("username")
+    identity = data["identity"]
 
-    proof = generate_identity_proof(username)
+    result = register_identity(identity)
 
-    return jsonify({
-        "proof": proof
-    })
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO identities (email, identity_hash, public_key) VALUES (?, ?, ?)",
+        (identity, result["identity_hash"], result["public_key"])
+    )
+
+    conn.commit()
+
+    conn.close()
+
+    return jsonify(result)

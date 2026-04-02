@@ -1,23 +1,36 @@
-async function generateProof(){
+async function registerIdentity(){
 
-let username = localStorage.getItem("user");
+const identity =
+document.getElementById("identity").value;
 
-let response = await fetch("/identity/generate_proof", {
+if(!identity){
 
-method:"POST",
+alert("Please enter identity");
 
-headers:{
-"Content-Type":"application/json"
-},
+return;
 
-body: JSON.stringify({
-username: username
-})
+}
 
-})
+const result =
+await apiRequest(
+"/register_identity",
+"POST",
+{identity}
+);
 
-let data = await response.json();
+localStorage.setItem(
+"private_key",
+result.private_key
+);
 
-document.getElementById("proof").value = data.proof;
+localStorage.setItem(
+"public_key",
+result.public_key
+);
+
+document.getElementById(
+"status"
+).innerText =
+"Identity Registered Successfully ✅";
 
 }

@@ -1,27 +1,70 @@
 <!DOCTYPE html>
+
 <html>
+
 <head>
-  <title>Sign Message</title>
-  <link rel="stylesheet" href="../../../assets/css/main.css">
-  <script src="../../../assets/js/layout.js"></script>
-</head>
-<body>
-<div id="navbar-container"></div>
-<div id="sidebar-container"></div>
-<div class="content">
-  <div class="card">
-    <h3>Sign Message</h3>
 
-    <textarea id="message" rows="4" style="width:100%;"></textarea><br><br>
-    <button onclick="signMessage()">Sign</button><br><br>
-
-    <input id="signature" readonly style="width:100%;" placeholder="Signature">
-  </div>
-</div>
-<div id="footer-container"></div>
-
+<link rel="stylesheet" href="../../../assets/css/styles.css">
 
 <script src="../../../assets/js/api.js"></script>
 <script src="../../../assets/js/signature.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Sign Message</h2>
+
+<textarea
+id="message"
+placeholder="Enter message"
+></textarea>
+
+<button onclick="signMessage()">
+
+Sign Message
+
+</button>
+
+<p
+id="status"
+class="status"
+></p>
+
+<a href="verify.html">Go to Verify Page →</a>
+</div>
+
+<script>
+
+async function signMessage(){
+
+const message =
+document.getElementById("message").value;
+
+const signature =
+await apiRequest(
+"/signature/sign",
+"POST",
+{
+message,
+private_key:
+localStorage.private_key
+}
+);
+
+document.getElementById(
+"status"
+).innerHTML =
+"Signature Generated Successfully";
+
+alert(signature.signature);
+
+}
+
+</script>
+
 </body>
+
 </html>

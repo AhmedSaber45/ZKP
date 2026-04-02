@@ -1,22 +1,11 @@
-import hashlib
+from utils.crypto_utils import sign_message, verify_signature
 
 
-SECRET_KEY = "zkp_project_secret"
+def create_signature(private_key, message):
+
+    return sign_message(private_key, message)
 
 
-def sign_message(message):
+def validate_signature(public_key, message, signature):
 
-    combined = message + SECRET_KEY
-
-    signature = hashlib.sha256(
-        combined.encode()
-    ).hexdigest()
-
-    return signature
-
-
-def verify_signature(message, signature):
-
-    expected_signature = sign_message(message)
-
-    return expected_signature == signature
+    return verify_signature(public_key, message, signature)
