@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <link rel="stylesheet" href="../../assets/css/main.css">
+</head>
+<body>
+
+<div style="display:flex;justify-content:center;align-items:center;height:100vh;">
+  <div class="card" style="width:320px;">
+    <h2>Register</h2>
+
+    <input id="username" placeholder="Username" style="width:100%;margin:10px 0;">
+    <input id="secret" type="password" placeholder="Secret" style="width:100%;margin:10px 0;">
+
+    <button onclick="generateKey()" style="width:100%;margin:10px 0;">
+      Generate Public Key
+    </button>
+
+    <input id="publicKey" placeholder="Public Key" readonly style="width:100%;margin:10px 0;">
+
+    <button onclick="register()" style="width:100%;">Register</button>
+
+    <p id="message"></p>
+  </div>
+</div>
+
+<script src="../../assets/js/api.js"></script>
+<script src="../../assets/js/auth.js"></script>
+</body>
+</html>

@@ -1,13 +1,11 @@
-async function login() {
+async function register() {
 
     const username = document.getElementById("username").value;
     const secret = document.getElementById("secret").value;
 
-    const proof = secret; // temporary (later ZKP)
-
-    const result = await apiRequest("/auth/login", "POST", {
+    const result = await apiRequest("/auth/register", "POST", {
         username: username,
-        proof: proof
+        secret: secret
     });
 
     alert(result.message);

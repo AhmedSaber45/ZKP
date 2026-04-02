@@ -1,25 +1,23 @@
-from flask import Flask, jsonify, request
-from config import DB_PATH, SECRET_KEY
-import sqlite3
-import os
+from flask import Flask
+
+
+from database import create_table_if_not_exists
+from routes.identity_routes import identity_routes
+from routes.signature_routes import signature_routes
 
 app = Flask(__name__)
-app.secret_key = SECRET_KEY
 
-def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
 
-# Home / Test route
-@app.route('/')
+create_table_if_not_exists()
+
+app.register_blueprint(identity_routes)
+app.register_blueprint(signature_routes)
+
+
+@app.route("/")
 def home():
-    return jsonify({"message": "Backend Running"})
+    return "Digital Trust Mode Backend Running ✅"
 
-# Example route template
-@app.route('/example', methods=['GET'])
-def example():
-    return jsonify({"message": "Example route"})
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)

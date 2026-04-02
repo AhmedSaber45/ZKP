@@ -19,8 +19,14 @@ CREATE TABLE IF NOT EXISTS votes (
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS identities (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id TEXT,
-    identity_proof TEXT
-);
+CREATE TABLE IF NOT EXISTS identities(
+
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+email TEXT,
+
+identity_hash TEXT NOT NULL,
+
+public_key TEXT NOT NULL
+
+)
