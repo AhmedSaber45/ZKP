@@ -1,0 +1,12 @@
+.env
+*.rar
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+dist/
+build/
+.vscode/
+.idea/
+brain/
+*.log

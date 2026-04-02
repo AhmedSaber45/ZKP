@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<link rel="stylesheet" href="../../../assets/css/styles.css">
+
+<script src="../../../assets/js/api.js"></script>
+<script src="../../../assets/js/signature.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Verify Signature</h2>
+
+<textarea
+id="message"
+placeholder="Enter message"
+></textarea>
+
+<input
+id="signature"
+placeholder="Paste signature"
+/>
+
+<button onclick="verifySignature()">
+
+Verify Signature
+
+</button>
+
+<p
+id="status"
+class="status"
+></p>
+<div id="verificationResult"></div>
+
+</div>
+
+<script>
+
+async function verifySignature(){
+
+const message =
+document.getElementById("message").value;
+
+const signature =
+document.getElementById("signature").value;
+
+const result =
+await apiRequest(
+"/signature/verify",
+"POST",
+{
+message,
+signature,
+public_key:
+localStorage.public_key
+}
+);
+
+document.getElementById(
+"status"
+).innerHTML =
+result.valid
+? "Signature Valid ✅"
+: "Signature Invalid ❌";
+
+}
+
+</script>
+
+</body>
+
+</html>
