@@ -11,11 +11,33 @@ A premium, cryptographic web application leveraging Zero-Knowledge Proofs (ZKP) 
 - **Privacy Vault**: AES-256 encrypted secrets management.
 - **System Audit**: Comprehensive cryptographic logging.
 
-## Local Setup
+
+## 🐳 Quick Start with Docker (Recommended)
+
+The easiest way to run the entire project (Frontend, Backend, and Database) is using Docker.
+
+### Prerequisites:
+- Install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+### Steps:
+1.  **Run with Docker Compose**:
+    ```bash
+##############################################   
+#### docker-compose up --build  ##############
+##############################################   
+
+    ```
+2.  **Access the application**:
+    - **Frontend (UI)**: [http://localhost:8080](http://localhost:8080)
+    - **Backend API**: [http://localhost:5000/api](http://localhost:5000/api)
+
+---
+
+## Local Setup (Alternative)
 
 To run the frontend of this project locally, you need a simple HTTP server. Follow one of the methods below:
 
-### Method 1: Using Python (Recommended)
+### Method 1: Using Python
 If you have Python installed, run the following command from the root directory of the project:
 
 ```bash
