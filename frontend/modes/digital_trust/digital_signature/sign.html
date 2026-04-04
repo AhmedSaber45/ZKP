@@ -57,9 +57,17 @@ localStorage.private_key
 document.getElementById(
 "status"
 ).innerHTML =
-"Signature Generated Successfully";
+"Signature Generated Successfully ✅<br><br>" +
+"<strong>Signature (click to copy):</strong><br>" +
+"<code id='signatureOutput' style='background: #f0f0f0; padding: 10px; display: block; word-break: break-all; cursor: pointer;'>" +
+signature.signature +
+"</code>";
 
-alert(signature.signature);
+// Allow clicking signature to copy
+document.getElementById("signatureOutput").onclick = function() {
+navigator.clipboard.writeText(signature.signature);
+alert("Signature copied to clipboard!");
+};
 
 }
 

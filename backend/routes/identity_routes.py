@@ -8,24 +8,30 @@ identity_routes = Blueprint("identity_routes", __name__)
 
 @identity_routes.route("/identity/register", methods=["POST"])
 def register():
+    if not request.is_json:
+        return jsonify({"error": "Request body must be JSON"}), 400
 
-    data = request.json
+    data = request.get_json()
 
-    identity = data["identity"]
+    identity = data.get("identity")
+    if not identity or not isinstance(identity, str):
+        return jsonify({"error": "Field 'identity' is required and must be a string"}), 400
 
-    result = register_identity(identity)
+    try:
+        result = register_identity(identity)
 
-    conn = get_connection()
+        conn = get_connection()
+        cursor = conn.cursor()
 
-    cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO identities (email, identity_hash, public_key) VALUES (?, ?, ?)",
+            (identity, result["identity_hash"], result["public_key"])
+        )
 
-    cursor.execute(
-        "INSERT INTO identities (email, identity_hash, public_key) VALUES (?, ?, ?)",
-        (identity, result["identity_hash"], result["public_key"])
-    )
+        conn.commit()
+        conn.close()
 
-    conn.commit()
+        return jsonify(result), 201
 
-    conn.close()
-
-    return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": "Failed to register identity", "details": str(e)}), 500

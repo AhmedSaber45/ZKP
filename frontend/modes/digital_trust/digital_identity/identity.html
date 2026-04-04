@@ -1,62 +1,30 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
-
-<link rel="stylesheet" href="../../../assets/css/styles.css">
-
-<script src="../../../assets/js/api.js" ></script>
-<script src="../../../assets/js/identity.js" ></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Identity Registration</title>
+    <link rel="stylesheet" href="../../../assets/css/styles.css">
+    <script src="../../../assets/js/api.js"></script>
+    <script src="../../../assets/js/identity.js"></script>
 </head>
-
-<body>
-
-<div class="container">
-
-<h2>Register Digital Identity</h2>
-
-<input
-id="identity"
-placeholder="Enter identity"
-/>
-
-<button onclick="registerIdentity()">
-
-Register Identity
-
-</button>
-
-<p
-id="status"
-class="status"
-></p>
-<a href="../digital_signature/sign.html">Go to Sign Page →</a>
-</div>
-
-<script>
-
-async function registerIdentity() {
-
-    const identity = document.getElementById("identity").value;
-
-    const result = await apiRequest(
-        "/identity/register", // ✅ fixed endpoint
-        "POST",
-        { email: identity }   // ⚠ backend expects field "email"
-    );
-
-    // store keys locally
-    localStorage.setItem("private_key", result.private_key);
-    localStorage.setItem("public_key", result.public_key);
-
-    document.getElementById("status").innerHTML =
-        "Identity Registered Successfully ✅";
-}
-
-</script>
-
+        <h2>Register Digital Identity</h2>
+        <form id="identityForm" onsubmit="registerIdentity(); return false;">
+            <div class="field-group">
+                <label for="identity">Identity</label>
+                <input
+                    id="identity"
+                    type="text"
+                    placeholder="e.g. johndoe@example.com"
+                    autocomplete="off"
+                    required
+                />
+            </div>
+            <button type="submit">Register Identity</button>
+            <p id="status" class="status"></p>
+            <button id="clearStatusBtn" type="button" class="secondary-btn">Clear Status</button>
+            <a class="secondary-link" href="../digital_signature/sign.html">Go to Sign Page →</a>
+        </form>
+    </div>
 </body>
-
 </html>

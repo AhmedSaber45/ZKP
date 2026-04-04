@@ -1,280 +1,121 @@
-/* Reset */
-
+﻿/* Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-
-/* Page Background */
-
 body {
-
-    font-family: Arial, sans-serif;
-
-    background: linear-gradient(
-        135deg,
-        #0f2027,
-        #203a43,
-        #2c5364
-    );
-
-    height: 100vh;
-
+    font-family: 'Inter', Arial, sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
+    padding: 24px;
 }
-
-
-/* Container Card */
 
 .container {
-
-    background: white;
-
-    padding: 40px;
-
-    border-radius: 12px;
-
-    width: 420px;
-
-    box-shadow:
-
-        0px 10px 25px rgba(0,0,0,0.3);
-
+    background: rgba(255, 255, 255, 0.98);
+    padding: 36px 36px 28px;
+    border-radius: 24px;
+    width: min(100%, 440px);
+    box-shadow: 0 20px 50px rgba(15, 32, 39, 0.18);
 }
-
-
-/* Title */
 
 h2 {
-
     text-align: center;
-
-    margin-bottom: 25px;
-
+    margin-bottom: 28px;
     color: #203a43;
-
+    letter-spacing: 0.02em;
 }
 
+label {
+    display: block;
+    font-size: 0.95rem;
+    color: #4d5b6b;
+    font-weight: 600;
+}
 
-/* Input Fields */
+.field-group {
+    margin-bottom: 18px;
+}
 
 input,
 textarea {
-
     width: 100%;
-
-    padding: 12px;
-
-    margin-top: 10px;
-
-    margin-bottom: 20px;
-
-    border-radius: 6px;
-
-    border: 1px solid #ccc;
-
+    padding: 14px 16px;
+    margin-top: 8px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+    border: 1px solid #d2d8df;
+    background: #f7f9fb;
     font-size: 15px;
-
+    color: #203a43;
+    box-shadow: inset 0 1px 2px rgba(15, 32, 39, 0.08);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-
-/* Buttons */
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: #2c5364;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(44, 83, 100, 0.12);
+}
 
 button {
-
     width: 100%;
-
-    padding: 12px;
-
+    padding: 14px 16px;
     background: #203a43;
-
     color: white;
-
     border: none;
-
-    border-radius: 6px;
-
+    border-radius: 10px;
     font-size: 16px;
-
+    font-weight: 700;
+    letter-spacing: 0.02em;
     cursor: pointer;
-
-    transition: 0.3s;
-
+    transition: background 0.25s ease, transform 0.2s ease;
 }
-
 
 button:hover {
-
     background: #2c5364;
-
+    transform: translateY(-1px);
 }
 
+.secondary-btn {
+    width: 100%;
+    margin-top: 12px;
+    background: transparent;
+    color: #203a43;
+    border: 1px solid #203a43;
+}
 
-/* Status Message */
+.secondary-link {
+    display: inline-block;
+    margin-top: 14px;
+    color: #203a43;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.secondary-link:hover {
+    color: #2c5364;
+}
 
 .status {
-
     text-align: center;
-
-    margin-top: 15px;
-
-    font-weight: bold;
-
+    margin-top: 12px;
+    min-height: 22px;
+    font-weight: 700;
+    color: #203a43;
 }
-
-
-/* Success Message */
 
 .success {
-
-    color: green;
-
+    color: #1f7a2d;
 }
-
-
-/* Error Message */
 
 .error {
-
-    color: red;
-
+    color: #c53030;
 }
-/* Reset */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-
-/* Page Background */
-
-body {
-
-    font-family: Arial, sans-serif;
-
-    background: linear-gradient(
-        135deg,
-        #0f2027,
-        #203a43,
-        #2c5364
-    );
-
-    height: 100vh;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-}
-
-
-/* Container Card */
-
-.container {
-
-    background: white;
-
-    padding: 40px;
-
-    border-radius: 12px;
-
-    width: 420px;
-
-    box-shadow:
-
-        0px 10px 25px rgba(0,0,0,0.3);
-
-}
-
-
-/* Title */
-
-h2 {
-
-    text-align: center;
-
-    margin-bottom: 25px;
-
-    color: #203a43;
-
-}
-
-
-/* Input Fields */
-
-input,
-textarea {
-
-    width: 100%;
-
-    padding: 12px;
-
-    margin-top: 10px;
-
-    margin-bottom: 20px;
-
-    border-radius: 6px;
-
-    border: 1px solid #ccc;
-
-    font-size: 15px;
-
-}
-
-
-/* Buttons */
-
-button {
-
-    width: 100%;
-
-    padding: 12px;
-
-    background: #203a43;
-
-    color: white;
-
-    border: none;
-
-    border-radius: 6px;
-
-    font-size: 16px;
-
-    cursor: pointer;
-
-    transition: 0.3s;
-
-}
-
-
-button:hover {
-
-    background: #2c5364;
-
-}
-
-
-/* Status Message */
-
-.status {
-
-    text-align: center;
-
-    margin-top: 15px;
-
-    font-weight: bold;
-
-}
-
-

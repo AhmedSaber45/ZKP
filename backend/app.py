@@ -1,11 +1,12 @@
 from flask import Flask
-
+from flask_cors import CORS
 
 from database import create_table_if_not_exists
 from routes.identity_routes import identity_routes
 from routes.signature_routes import signature_routes
 
 app = Flask(__name__)
+CORS(app)
 
 
 create_table_if_not_exists()
