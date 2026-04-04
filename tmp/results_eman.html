@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+</head>
+<body>
+
+<h2>Voting Results</h2>
+
+<div id="admin-login" style="max-width: 360px; margin-bottom: 16px;">
+    <h3>Admin Login</h3>
+    <input id="admin-email" type="email" placeholder="Admin email" style="display:block; width:100%; margin-bottom:8px;">
+    <input id="admin-password" type="password" placeholder="Password" style="display:block; width:100%; margin-bottom:8px;">
+    <button id="admin-login-btn" type="button">Login as Admin</button>
+    <p id="admin-message" style="margin-top:8px;"></p>
+</div>
+
+<div id="results" style="display:none;"></div>
+
+<script src="../../../assets/js/api.js"></script>
+<script>
+async function loadResults() {
+    const res = await apiRequest("/voting/results");
+
+    let html = "";
+    const data = res.data || {};
+    const keys = Object.keys(data);
+
+    if (keys.length === 0) {
+        html = "<p>No voting data available yet.</p>";
+    } else {
+        for (let c in data) {
+            html += `<p>${c}: ${data[c]}</p>`;
+        }
+    }
+
+    document.getElementById("results").innerHTML = html;
+}
+
+async function adminLogin() {
+    const email = document.getElementById("admin-email").value.trim().toLowerCase();
+    const password = document.getElementById("admin-password").value;
+    const message = document.getElementById("admin-message");
+
+    if (!email || !password) {
+        message.textContent = "Please enter admin email and password.";
+        message.style.color = "#b91c1c";
+        return;
+    }
+
+    const result = await apiRequest("/voting/admin/login", "POST", {
+        email,
+        password
+    });
+
+    if (result.status !== "success") {
+        message.textContent = result.message || "Login failed";
+        message.style.color = "#b91c1c";
+        return;
+    }
+
+    message.textContent = "Admin authenticated.";
+    message.style.color = "#166534";
+    document.getElementById("admin-login").style.display = "none";
+    document.getElementById("results").style.display = "block";
+    loadResults();
+}
+
+document.getElementById("admin-login-btn").addEventListener("click", adminLogin);
+</script>
+
+</body>
+</html>

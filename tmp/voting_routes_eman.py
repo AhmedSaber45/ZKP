@@ -1,8 +1,7 @@
 from flask import Blueprint, request, jsonify
 from services.voting_service import generate_challenge, verify_vote
-from config import ADMIN_EMAIL, ADMIN_PASSWORD, DB_PATH
+from config import ADMIN_EMAIL, ADMIN_PASSWORD
 import hmac
-import sqlite3
 
 voting_bp = Blueprint("voting", __name__)
 
@@ -23,11 +22,11 @@ def start_vote():
         commitment = int(commitment)
         public_key = int(public_key)
     except (TypeError, ValueError):
-        return jsonify({"status": "error", "message": "Invalid proof formats"}), 400
+        return jsonify({"status": "error", "message": "Invalid proof"}), 400
 
     stored_public_key = voter_public_keys.get(voter_hash)
     if stored_public_key is not None and stored_public_key != public_key:
-        return jsonify({"status": "error", "message": "Public key mismatch for user"}), 400
+        return jsonify({"status": "error", "message": "Invalid proof"}), 400
 
     if stored_public_key is None:
         voter_public_keys[voter_hash] = public_key
@@ -46,6 +45,7 @@ def start_vote():
 @voting_bp.route("/submit", methods=["POST"])
 def submit_vote():
     data = request.json
+
     voter_hash = data.get("voter_hash")
     candidate = data.get("candidate")
     response = data.get("response")
@@ -64,6 +64,9 @@ def submit_vote():
 
 @voting_bp.route("/results", methods=["GET"])
 def results():
+    import sqlite3
+    from config import DB_PATH
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
@@ -93,3 +96,11 @@ def admin_login():
         return jsonify({"status": "error", "message": "Invalid admin credentials"}), 401
 
     return jsonify({"status": "success", "message": "Admin authenticated"})
+
+
+
+
+
+
+
+    

@@ -36,26 +36,78 @@ function loadComponent(id, file) {
             });
         });
 
-        // Current page highlighting
+        // Current page highlighting and sub-menu expansion
         const currentPath = window.location.pathname;
+        const cleanPath = currentPath.split('/').pop().replace('.html', '');
+
         links.forEach(link => {
             const linkHref = link.getAttribute('href');
-            // Clean paths for comparison
-            const cleanPath = currentPath.split('/').pop();
-            const cleanLink = linkHref.split('/').pop();
+            if (!linkHref) return;
             
-            if (cleanPath === cleanLink && cleanPath !== "" && cleanPath !== "index.html") {
+            const cleanLink = linkHref.split('/').pop().replace('.html', '');
+            
+            // Exact match for active state
+            if (cleanPath === cleanLink && cleanPath !== "" && cleanPath !== "index") {
                 link.classList.add('active');
+                
+                // If this is a sub-menu item, expand the parent
+                const subMenu = link.closest('.sub-menu');
+                if (subMenu) {
+                    subMenu.parentElement.classList.add('expanded');
+                }
             } else {
                 link.classList.remove('active');
             }
+
+            // Handle Sub-menu Toggle
+            if (link.classList.contains('has-submenu')) {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent jump for parent items
+                    const wrapper = link.closest('.menu-item-wrapper');
+                    if (wrapper) {
+                        wrapper.classList.toggle('expanded');
+                    }
+                });
+            }
         });
 
-        // Special handling for navbar user display
+        // Special handling for navbar user display and auth button
         if (id === "navbar-container") {
           const user = localStorage.getItem("user");
           const navUser = document.getElementById("navUser");
-          if (navUser && user) navUser.innerText = user;
+          const userInfo = document.getElementById("userInfo");
+          const authBtn = document.getElementById("authBtn");
+          const authBtnText = document.getElementById("authBtnText");
+          const authBtnIcon = document.getElementById("authBtnIcon");
+
+          if (user) {
+            if (navUser) navUser.innerText = user;
+            if (userInfo) userInfo.style.display = 'flex';
+            if (authBtnText) authBtnText.innerText = "Sign Out";
+            if (authBtn) {
+              authBtn.onclick = logout;
+              authBtn.classList.remove('login-btn');
+              authBtn.classList.add('logout-btn');
+            }
+          } else {
+            if (userInfo) userInfo.style.display = 'none';
+            if (authBtnText) authBtnText.innerText = "Sign In";
+            if (authBtn) {
+              authBtn.onclick = () => {
+                window.location.href = getRelativePrefix() + "modes/authentication/login.html";
+              };
+              authBtn.classList.remove('logout-btn');
+              authBtn.classList.add('login-btn');
+            }
+            if (authBtnIcon) {
+              authBtnIcon.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                  <polyline points="10 17 15 12 10 7"></polyline>
+                  <line x1="15" y1="12" x2="3" y2="12"></line>
+                </svg>`;
+            }
+          }
         }
       }
     })
@@ -108,7 +160,9 @@ function closeSidebar() {
 }
 
 function logout() {
-  localStorage.clear();
+  console.log("[Auth] Logging out...");
+  localStorage.removeItem("user");
+  localStorage.removeItem("token"); // Clear token if any
   window.location.href = getRelativePrefix() + "index.html";
 }
 

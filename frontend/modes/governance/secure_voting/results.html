@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | ZKP Vault</title>
+    <link rel="stylesheet" href="../../../assets/css/main.css">
+    <script src="../../../assets/js/layout.js"></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+    <div id="sidebar-container"></div>
+
+    <div class="content animate-fade-in">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="color: var(--text-main);">Admin Audit Dashboard</h1>
+            <p>Verify and monitor cryptographic election results</p>
+        </div>
+
+        <div style="max-width: 800px; margin: 0 auto;">
+            <!-- Admin Login Card -->
+            <div id="admin-login-card" class="card animate-fade-in">
+                <h3 style="margin-bottom: 1.5rem;">Authentication Required</h3>
+                <p style="margin-bottom: 2rem; color: var(--text-muted);">Please sign in with administrator credentials to view live ballot tallies.</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Email Address</label>
+                        <input id="admin-email" type="email" placeholder="admin@zkp.local" class="glass" 
+                            style="padding: 14px; border-radius: 10px; font-size: 0.9rem;" />
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Security Passkey</label>
+                        <input id="admin-password" type="password" placeholder="••••••••" class="glass" 
+                            style="padding: 14px; border-radius: 10px; font-size: 0.9rem;" />
+                    </div>
+
+                    <button id="admin-login-btn" style="width: 100%; margin-top: 1rem; padding: 14px;">
+                        Secure Access
+                    </button>
+                    <p id="admin-message" style="text-align: center; height: 20px; font-size: 0.85rem; font-weight: 500;"></p>
+                </div>
+            </div>
+
+            <!-- Results Display Card (Hidden by default) -->
+            <div id="results-card" class="card" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h3>Live Election Status</h3>
+                    <span class="glass" style="padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; color: #22c55e; border: 1px solid #22c55e44;">
+                        LIVE AUDIT ACTIVE
+                    </span>
+                </div>
+                
+                <div id="results-container" style="display: flex; flex-direction: column; gap: 2rem;">
+                    <!-- Results populate here -->
+                </div>
+
+                <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                    <button onclick="location.reload()" class="glass" style="width: auto; padding: 8px 16px; font-size: 0.8rem;">
+                        Refresh Tallies
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+
+    <script src="../../../assets/js/api.js"></script>
+    <script>
+        async function fetchResults() {
+            try {
+                const res = await fetch(`${API}/voting/results`);
+                const json = await res.json();
+                const container = document.getElementById("results-container");
+
+                if (json.status !== "success") {
+                    container.innerHTML = `<p style="text-align: center; color: var(--text-muted);">${json.message || "Error loading results."}</p>`;
+                    return;
+                }
+
+                const data = json.data;
+                const entries = Object.entries(data);
+
+                if (entries.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 60px;"><p style="color: var(--text-muted);">No verified ballots found in the database.</p></div>';
+                    return;
+                }
+
+                const total = entries.reduce((acc, [_, count]) => acc + count, 0);
+
+                container.innerHTML = entries.map(([choice, count]) => {
+                    const pct = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
+                    return `
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="font-weight: 600;">${choice}</span>
+                                <span style="color: var(--primary); font-family: monospace; font-size: 1.1rem;">${pct}%</span>
+                            </div>
+                            <div style="height: 12px; background: rgba(255,255,255,0.03); border-radius: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+                                <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, var(--primary-light), var(--primary)); box-shadow: 0 0 15px var(--primary-alpha); transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">${count} verified ballots</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">Cryptographically Signed</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById("admin-email").value.trim().toLowerCase();
+            const password = document.getElementById("admin-password").value;
+            const message = document.getElementById("admin-message");
+
+            if (!email || !password) {
+                message.textContent = "Credentials required.";
+                message.style.color = "#ef4444";
+                return;
+            }
+
+            message.textContent = "Authenticating...";
+            message.style.color = "var(--text-muted)";
+
+            try {
+                const res = await fetch(`${API}/voting/admin/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (data.status !== "success") {
+                    message.textContent = data.message || "Access Denied";
+                    message.style.color = "#ef4444";
+                    return;
+                }
+
+                // Success
+                document.getElementById("admin-login-card").classList.add("animate-fade-out");
+                setTimeout(() => {
+                    document.getElementById("admin-login-card").style.display = "none";
+                    document.getElementById("results-card").style.display = "block";
+                    document.getElementById("results-card").classList.add("animate-fade-in");
+                    fetchResults();
+                }, 300);
+
+            } catch (err) {
+                message.textContent = "System Offline";
+                message.style.color = "#ef4444";
+            }
+        }
+
+        document.getElementById("admin-login-btn").addEventListener("click", handleLogin);
+    </script>
+</body>
+
+</html>
