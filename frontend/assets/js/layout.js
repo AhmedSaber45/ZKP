@@ -9,7 +9,11 @@ function loadComponent(id, file) {
   const prefix = getRelativePrefix();
   console.log(`[Layout] Loading ${file} with prefix: ${prefix}`);
   
+<<<<<<< HEAD
+  fetch(prefix + file + '?cb=' + new Date().getTime(), { cache: 'no-store' })
+=======
   fetch(prefix + file)
+>>>>>>> origin/main
     .then(res => {
       if (!res.ok) throw new Error(`Could not load ${file}`);
       return res.text();
@@ -89,6 +93,17 @@ function loadComponent(id, file) {
               authBtn.classList.remove('login-btn');
               authBtn.classList.add('logout-btn');
             }
+<<<<<<< HEAD
+            if (authBtnIcon) {
+              authBtnIcon.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>`;
+            }
+=======
+>>>>>>> origin/main
           } else {
             if (userInfo) userInfo.style.display = 'none';
             if (authBtnText) authBtnText.innerText = "Sign In";
@@ -160,10 +175,19 @@ function closeSidebar() {
 }
 
 function logout() {
+<<<<<<< HEAD
+  console.log("[Auth] Logging out and clearing all state...");
+  localStorage.clear(); // Clear all user data
+  sessionStorage.clear(); // Optional: clear session data too
+  
+  // Navigate to home page with a timestamp to force a fresh refresh and bypass cache
+  window.location.href = getRelativePrefix() + "index.html?v=" + new Date().getTime();
+=======
   console.log("[Auth] Logging out...");
   localStorage.removeItem("user");
   localStorage.removeItem("token"); // Clear token if any
   window.location.href = getRelativePrefix() + "index.html";
+>>>>>>> origin/main
 }
 
 // --- Navbar Hide on Scroll ---
