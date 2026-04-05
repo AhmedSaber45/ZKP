@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Info | ZKP Vault</title>
+    <link rel="stylesheet" href="../../../assets/css/main.css">
+    <script src="../../../assets/js/layout.js"></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+    <div id="sidebar-container"></div>
+
+    <div class="content animate-fade-in">
+        <div style="margin-bottom: 2.5rem; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 style="color: var(--text-main);">Proposals & Candidates</h1>
+                <p>Review detailed technical specs before casting your ballot</p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="vote.html" class="glass" style="padding: 10px 20px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; text-decoration: none; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.08 22a10 10 0 1 1 5.93-9.14"></path><polyline points="22 4 12 14 9 11"></polyline></svg>
+                     Go to Voting
+                </a>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 2rem;">
+            <!-- Candidate A Card -->
+            <div class="card" style="position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: radial-gradient(circle at top right, var(--primary-alpha), transparent); pointer-events: none;"></div>
+                
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--primary-alpha); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                        <span style="font-weight: 800; font-size: 1.2rem;">A</span>
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1.25rem;">Candidate 1</h2>
+                        <p style="font-size: 0.75rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Infrastructure Specialist</p>
+                    </div>
+                </div>
+
+                <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">
+                    Focuses on network resilience and regional node expansion. Her proposal aims to increase decentralization across the EMEA sector.
+                </p>
+
+                <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; letter-spacing: 0.5px;">Key Initiatives</h4>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <li style="display: flex; gap: 12px; font-size: 0.9rem; align-items: flex-start;">
+                        <span style="color: var(--primary); margin-top: 2px;">•</span>
+                        <span>Regional node scaling for 99.9% protocol uptime.</span>
+                    </li>
+                    <li style="display: flex; gap: 12px; font-size: 0.9rem; align-items: flex-start;">
+                        <span style="color: var(--primary); margin-top: 2px;">•</span>
+                        <span>Quarterly technical accountability transparency reports.</span>
+                    </li>
+                    <li style="display: flex; gap: 12px; font-size: 0.9rem; align-items: flex-start;">
+                        <span style="color: var(--primary); margin-top: 2px;">•</span>
+                        <span>Public real-time incident-response dashboard integration.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Candidate B Card -->
+            <div class="card" style="position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: radial-gradient(circle at top right, rgba(239,68,68,0.1), transparent); pointer-events: none;"></div>
+
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(239,68,68,0.1); display: flex; align-items: center; justify-content: center; color: #ef4444;">
+                        <span style="font-weight: 800; font-size: 1.2rem;">B</span>
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1.25rem;">Candidate 2</h2>
+                        <p style="font-size: 0.75rem; color: #ef4444; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Optimization Lead</p>
+                    </div>
+                </div>
+
+                <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">
+                    Prioritizes protocol efficiency and verification speed. His roadmap targets a 40% reduction in proof generation latency.
+                </p>
+
+                <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; letter-spacing: 0.5px;">Key Initiatives</h4>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <li style="display: flex; gap: 12px; font-size: 0.9rem; align-items: flex-start;">
+                        <span style="color: #ef4444; margin-top: 2px;">•</span>
+                        <span>Optimization of proof verification timeout constants.</span>
+                    </li>
+                    <li style="display: flex; gap: 12px; font-size: 0.9rem; align-items: flex-start;">
+                        <span style="color: #ef4444; margin-top: 2px;">•</span>
+                        <span>Introduction of parallel scheduler improvements.</span>
+                    </li>
+                    <li style="display: flex; gap: 12px; font-size: 0.9rem; align-items: flex-start;">
+                        <span style="color: #ef4444; margin-top: 2px;">•</span>
+                        <span>Monthly technical deep-dive and AMA sessions.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+
+    <script src="../../../assets/js/api.js"></script>
+</body>
+
+</html>

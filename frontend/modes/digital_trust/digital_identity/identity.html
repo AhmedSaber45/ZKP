@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Identity | ZKP Vault</title>
+    <link rel="stylesheet" href="../../../assets/css/main.css">
+    <script src="../../../assets/js/layout.js"></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+    <div id="sidebar-container"></div>
+
+    <div class="content animate-fade-in">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="color: var(--text-main);">Digital Identity</h1>
+            <p>Manage and verify your global digital footprints</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+            <!-- Register Identity -->
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Secure Vault Identity</h3>
+                <p style="margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--text-muted);">Paste your cryptographic
+                    proof here to link your account across the network.</p>
+
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div>
+                        <label
+                            style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">IDENTITY
+                            PROOF (HEX/B64)</label>
+                        <textarea id="id-proof" style="height: 120px; font-family: monospace; resize: none;"
+                            placeholder="Paste proof here..."></textarea>
+                    </div>
+                    <button onclick="registerId()" style="width:100%;">
+                        Verify & Link Identity
+                    </button>
+                    <p id="id-message" style="text-align: center; height: 20px; font-size: 0.8rem;"></p>
+                </div>
+            </div>
+
+            <!-- Identity Panel -->
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Linked Profiles</h3>
+                <div
+                    style="padding: 40px; text-align: center; border: 2px dashed var(--glass-border); border-radius: 16px;">
+                    <div
+                        style="width: 64px; height: 64px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: var(--primary);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <p id="profile-status" style="color: var(--text-muted); font-size: 0.9rem;">Checking linked
+                        identities...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+
+    <script src="../../../assets/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user_id = localStorage.getItem("user");
+            if (user_id) {
+                 document.getElementById("profile-status").innerHTML = `<span style="color: var(--text-muted);">User:</span> ${user_id}`;
+            }
+        });
+
+        async function registerId() {
+            const proof = document.getElementById("id-proof").value;
+            const msg = document.getElementById("id-message");
+            const user_id = localStorage.getItem("user") || "anonymous";
+
+            if (!proof) {
+                msg.innerText = "Proof cannot be empty";
+                msg.style.color = "#ef4444";
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/identity/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id, proof })
+                });
+
+                if (res.ok) {
+                    msg.innerText = "Identity successfully anchored!";
+                    msg.style.color = "#22c55e";
+                    document.getElementById("profile-status").innerHTML = `<span style="color: #22c55e;">Active Identity:</span> ${user_id}`;
+                } else {
+                    msg.innerText = "Registration failed.";
+                    msg.style.color = "#ef4444";
+                }
+            } catch (err) {
+                msg.innerText = "Server Error";
+                msg.style.color = "#ef4444";
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,114 @@
+<aside class="sidebar">
+  <!-- Main Section -->
+  <div class="menu-group">
+    <h3 class="menu-title">Main Navigation</h3>
+    <a href="dashboard.html" id="link-dashboard">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      </svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="modes.html" id="link-modes">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      </svg>
+      <span>Modes Overview</span>
+    </a>
+  </div>
+
+  <!-- Operations Section -->
+  <div class="menu-group">
+    <h3 class="menu-title">ZKP Operations</h3>
+    
+    <!-- Auth Group -->
+    <div class="menu-item-wrapper">
+      <a href="modes/authentication/login.html" id="link-auth" class="has-submenu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          <path d="M12 8v4"></path>
+          <path d="M12 16h.01"></path>
+        </svg>
+        <span>Authentication</span>
+      </a>
+      <div class="sub-menu">
+        <a href="modes/authentication/login.html">Sign In</a>
+        <a href="modes/authentication/register.html">Create Identity</a>
+      </div>
+    </div>
+
+    <!-- Blockchain -->
+    <a href="modes/blockchain/transaction.html" id="link-blockchain">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+      </svg>
+      <span>Blockchain Assets</span>
+    </a>
+
+    <!-- Digital Trust Group -->
+    <div class="menu-item-wrapper">
+      <a href="modes/digital_trust/digital_signature/sign.html" id="link-trust" class="has-submenu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>Digital Trust</span>
+      </a>
+      <div class="sub-menu">
+        <a href="modes/digital_trust/digital_signature/sign.html">Sign Message</a>
+        <a href="modes/digital_trust/digital_identity/identity.html">Identity Proof</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Governance Section -->
+  <div class="menu-group">
+    <h3 class="menu-title">Governance</h3>
+    <div class="menu-item-wrapper">
+      <a href="modes/governance/secure_voting/vote.html" id="link-voting" class="has-submenu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        <span>Secure Voting</span>
+      </a>
+      <div class="sub-menu">
+        <a href="modes/governance/secure_voting/vote.html">Cast Ballot</a>
+        <a href="modes/governance/secure_voting/results.html">Election Results</a>
+        <a href="modes/governance/secure_voting/candidate_info.html">Candidates</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Section -->
+  <div class="menu-group">
+    <h3 class="menu-title">Security Center</h3>
+    <div class="menu-item-wrapper">
+      <a href="modes/security/vault/secrets.html" id="link-security" class="has-submenu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>Privacy & Audit</span>
+      </a>
+      <div class="sub-menu">
+        <a href="modes/security/vault/secrets.html">Secure Vault</a>
+        <a href="modes/security/audit/logs.html">Audit Logs</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Section -->
+  <div class="sidebar-footer">
+    <div class="status-card">
+      <span class="status-label">SYSTEM STATUS</span>
+      <span class="status-value">Fully Encrypted</span>
+    </div>
+  </div>
+</aside>

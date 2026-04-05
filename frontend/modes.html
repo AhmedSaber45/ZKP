@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Modes Overview | ZKP Vault</title>
+  <link rel="stylesheet" href="assets/css/main.css?v=2">
+  <script src="assets/js/layout.js?v=2"></script>
+
+</head>
+
+<body>
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <div class="content animate-fade-in">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div class="page-header" style="margin-bottom: 3rem;">
+        <div>
+          <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">Select Your <span style="color: var(--primary);">Secure Mode</span></h1>
+          <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px;">
+            Choose an operation mode to begin your cryptographic journey. All algorithms are powered by state-of-the-art Zero-Knowledge Proofs.
+          </p>
+        </div>
+      </div>
+
+      <div class="modes-grid">
+        <!-- ZKP Authentication (SRP) -->
+        <div class="card mode-card">
+          <!-- <span class="badge badge-secure">Premium</span> -->
+          <div class="mode-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="M12 8v4"></path>
+              <path d="M12 16h.01"></path>
+            </svg>
+          </div>
+          <h3 class="mode-title">ZKP Authentication (SRP)</h3>
+          <p class="mode-description">
+            Prove your identity without ever sending your password to the server. Experience the Secure Remote Password protocol in action.
+          </p>
+          <a href="modes/authentication/login.html" style="text-decoration: none;">
+            <button class="mode-btn">Launch Operation</button>
+          </a>
+        </div>
+
+        <!-- Blockchain -->
+        <div class="card mode-card">
+          <!-- <span class="badge badge-secure">Active</span> -->
+          <div class="mode-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+          </div>
+          <h3 class="mode-title">Blockchain Transactions</h3>
+          <p class="mode-description">
+            Securely manage and verify ledger updates using zero-knowledge proofs. Ensure privacy while maintaining transparency in decentralized networks.
+          </p>
+          <a href="modes/blockchain/transaction.html" style="text-decoration: none;">
+            <button class="mode-btn">Launch Operation</button>
+          </a>
+        </div>
+
+        <!-- Signatures -->
+        <div class="card mode-card">
+          <!-- <span class="badge badge-secure">Active</span> -->
+          <div class="mode-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <h3 class="mode-title">Digital Signatures</h3>
+          <p class="mode-description">
+            Generate non-interactive ZK signatures. Prove ownership or authorization without exposing your private key or sensitive document content.
+          </p>
+          <a href="modes/digital_trust/digital_signature/sign.html" style="text-decoration: none;">
+            <button class="mode-btn">Launch Operation</button>
+          </a>
+        </div>
+
+        <!-- Identity -->
+        <div class="card mode-card">
+          <!-- <span class="badge badge-beta">Beta</span> -->
+          <div class="mode-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3 class="mode-title">Identity Management</h3>
+          <p class="mode-description">
+            Authenticate specific attributes like age or membership without revealing your full identity. Total control over your digital persona.
+          </p>
+          <a href="modes/digital_trust/digital_identity/identity.html" style="text-decoration: none;">
+            <button class="mode-btn">Launch Operation</button>
+          </a>
+        </div>
+
+        <!-- Voting -->
+        <div class="card mode-card">
+          <!-- <span class="badge badge-secure">Active</span> -->
+          <div class="mode-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </div>
+          <h3 class="mode-title">Secure Voting</h3>
+          <p class="mode-description">
+            Participate in decentralized governance. Cast verifiable votes that remain completely anonymous using advanced cryptographic protocols.
+          </p>
+          <a href="modes/governance/secure_voting/vote.html" style="text-decoration: none;">
+            <button class="mode-btn">Cast Your Vote</button>
+          </a>
+        </div>
+
+        <!-- Privacy Vault -->
+        <div class="card mode-card">
+          <!-- <span class="badge badge-secure">Active</span> -->
+          <div class="mode-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h3 class="mode-title">Privacy Vault</h3>
+          <p class="mode-description">
+            Store and retrieve sensitive data protected by AES-256 and ZKP access control. Your secrets never leave the vault unencrypted.
+          </p>
+          <a href="modes/security/vault/secrets.html" style="text-decoration: none;">
+            <button class="mode-btn">Access Vault</button>
+          </a>
+        </div>
+
+        <!-- System Audit -->
+        <div class="card mode-card">
+          <!-- <span class="badge badge-beta">Admin Only</span> -->
+          <div class="mode-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <h3 class="mode-title">System Audit</h3>
+          <p class="mode-description">
+            Review granular system logs and track zero-knowledge proof verification history. Full visibility into cryptographic operations.
+          </p>
+          <a href="modes/security/audit/logs.html" style="text-decoration: none;">
+            <button class="mode-btn">View Logs</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-container"></div>
+
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+</body>
+
+</html>
