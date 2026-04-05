@@ -1,4 +1,4 @@
-
+.env
 *.rar
 __pycache__/
 *.pyc
