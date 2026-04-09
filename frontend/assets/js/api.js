@@ -1,8 +1,10 @@
-const API_BASE_URL = "http://127.0.0.1:5000/api";
+const API_HOST = window.location.hostname === "127.0.0.1" ? "127.0.0.1" : "localhost";
+const API_BASE_URL = `http://${API_HOST}:5000/api`;
 
 async function apiRequest(endpoint, method = "GET", data = null) {
     const options = {
         method: method,
+        credentials: "include",
         headers: {
             "Content-Type": "application/json"
         }
@@ -20,15 +22,4 @@ async function apiRequest(endpoint, method = "GET", data = null) {
         return {status: "error", message: `Network error: ${err.message}`};
     }
 }
-const API = "http://localhost:5000/api";
-
-async function testBackend() {
-    try {
-        const res = await fetch("http://localhost:5000/");
-        const data = await res.json();
-        console.log("Backend Connection Success:", data);
-    } catch (err) {
-        console.warn("Backend might be offline or URL prefix is wrong.");
-    }
-}
-testBackend();
+const API = API_BASE_URL;

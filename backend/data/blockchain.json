@@ -1,0 +1,41 @@
+{
+  "chain": [
+    {
+      "index": 0,
+      "timestamp": 1775761328.8577654,
+      "transactions": [],
+      "previous_hash": "0",
+      "nonce": 0,
+      "hash": "955f06f8476ad0b3ba8ea9d2038cf7c2c67800fc7ddb5dd84ad63d896ff49a49"
+    },
+    {
+      "index": 1,
+      "timestamp": 1775761959.5761409,
+      "transactions": [
+        {
+          "id": "48fabd8a-a607-4265-a61d-4b9c856f00a5",
+          "sender": "0x072c49b948bc8236881f5902b45db7058887eb23",
+          "receiver": "0x072c49b948bc8236881f5902b45db7058887eb23",
+          "amount": 773.0,
+          "amount_text": "773",
+          "signature": "okoRyXftFZU2AblI2WU52Yaxu1RUrJg0254u6xABw/5eNydMhhUwXl/2wdXHsmbAUlCsY0amMXjjFE37aandbQ==",
+          "public_key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETEXHzWIQa9ga/axTEbEr3eypGiRkOjhv0Jqq0rqQ0TMK5Q8EmWUGl73ngV0CBmaKlGekgJFk6nNIMee1cXVS/A==",
+          "timestamp": 1775761942.173509
+        },
+        {
+          "id": "287aebf6-ad33-4c09-bcd8-f1953fad35d1",
+          "sender": "Network",
+          "receiver": "0x072c49b948bc8236881f5902b45db7058887eb23",
+          "amount": 50,
+          "amount_text": "50",
+          "timestamp": 1775761959.5761409
+        }
+      ],
+      "previous_hash": "955f06f8476ad0b3ba8ea9d2038cf7c2c67800fc7ddb5dd84ad63d896ff49a49",
+      "nonce": 39577,
+      "hash": "00000baeec5cd0d28acbc8d44bbc7900fd5e55bce727efd24376b591a95040cc"
+    }
+  ],
+  "pending_transactions": [],
+  "nodes": []
+}
