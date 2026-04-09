@@ -35,7 +35,7 @@ def handle_http_error(error):
 
 @app.route('/')
 def home():
-    print("🔥 REQUEST RECEIVED")
+    print("REQUEST RECEIVED")
     return jsonify({"message": "ZKP Backend API Running", "status": "Secure"})
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
