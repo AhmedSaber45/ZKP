@@ -43,5 +43,8 @@ app.register_blueprint(blockchain_bp, url_prefix='/api/blockchain')
 app.register_blueprint(voting_bp, url_prefix='/api/voting')
 app.register_blueprint(identity_bp, url_prefix='/api/identity')
 
+from routes.signature_routes import signature_bp
+app.register_blueprint(signature_bp, url_prefix='/api/signatures')
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

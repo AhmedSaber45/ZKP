@@ -84,18 +84,22 @@
             }
 
             try {
-                const res = await fetch(`${API}/identity/register`, {
+                const res = await fetch(`${API}/identity/register_digital`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id, proof })
+                    body: JSON.stringify({ identity: proof })
                 });
 
                 if (res.ok) {
-                    msg.innerText = "Identity successfully anchored!";
+                    const data = await res.json();
+                    localStorage.setItem("private_key", data.private_key);
+                    localStorage.setItem("public_key", data.public_key);
+                    msg.innerText = "Identity anchored! RSA Keys generated.";
                     msg.style.color = "#22c55e";
-                    document.getElementById("profile-status").innerHTML = `<span style="color: #22c55e;">Active Identity:</span> ${user_id}`;
+                    document.getElementById("profile-status").innerHTML = `<span style="color: #22c55e;">Active Identity:</span> ${user_id} (RSA Enabled)`;
                 } else {
-                    msg.innerText = "Registration failed.";
+                    const errData = await res.json();
+                    msg.innerText = errData.error || "Registration failed.";
                     msg.style.color = "#ef4444";
                 }
             } catch (err) {
