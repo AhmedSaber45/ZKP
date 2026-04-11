@@ -27,3 +27,12 @@ CREATE TABLE IF NOT EXISTS identities (
     user_id TEXT,
     identity_proof TEXT
 );
+
+CREATE TABLE IF NOT EXISTS blockchain_blocks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    index_num INTEGER,
+    timestamp TEXT,
+    data TEXT,
+    previous_hash TEXT,
+    hash TEXT
+);

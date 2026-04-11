@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 
 from services.auth_service import is_email_registered, register_user, start_login, verify_login
 
@@ -63,8 +63,24 @@ def login_verify():
         client_proof = data.get("M1", "").strip().lower()
 
         result = verify_login(email, client_proof)
+        if result.get("status") == "success":
+            session["user_email"] = email
         status_code = result.pop("code", 200)
         return jsonify(result), status_code
     except Exception as error:
         print(f"Login verify error: {error}")
         return jsonify({"status": "error", "message": "Internal server error"}), 500
+
+
+@auth_bp.route("/me", methods=["GET"])
+def me():
+    email = str(session.get("user_email", "")).strip().lower()
+    if not email:
+        return jsonify({"status": "error", "message": "Not authenticated"}), 401
+    return jsonify({"status": "success", "email": email})
+
+
+@auth_bp.route("/logout", methods=["POST"])
+def logout():
+    session.pop("user_email", None)
+    return jsonify({"status": "success", "message": "Logged out"})

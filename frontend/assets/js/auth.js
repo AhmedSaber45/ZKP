@@ -21,6 +21,7 @@ async function login() {
         // We use the simplified login flow as per the current backend implementation
         const response = await fetch(`${API}/auth/login`, {
             method: "POST",
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, secret })
         });
@@ -67,6 +68,7 @@ async function register() {
 
         const response = await fetch(`${API}/auth/register`, {
             method: "POST",
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
         });

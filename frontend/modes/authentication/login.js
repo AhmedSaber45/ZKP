@@ -34,6 +34,14 @@ async function login(event) {
         if (result.status === "success") {
             logger.append("Authentication Verified. Secure session established!");
             localStorage.setItem("user", email.split('@')[0]); // Use part of email as username
+
+            const sessionCheck = await apiRequest("/auth/me");
+            if (sessionCheck.status !== "success") {
+                logger.append("Session cookie was not established. Please refresh and login again.", true);
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = `Authenticate <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>`;
+                return;
+            }
             
             // Premium feel delay before redirect
             setTimeout(() => {

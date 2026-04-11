@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Chain Viewer</title>
+</head>
+<body>
+
+<main>
+    <h1>Blockchain Chain Viewer</h1>
+    <p>
+        This page shows your authenticated wallet history from the blockchain database.
+    </p>
+
+    <section>
+        <p>Your wallet address: <strong id="walletAddress">-</strong></p>
+        <p>Current balance: <strong id="currentBalance">0</strong></p>
+
+        <button onclick="getChain()">Load My Records</button>
+        <button onclick="validateChain()">Validate Chain</button>
+        <button type="button" onclick="window.location.href='transaction.html'">Back to Transactions</button>
+    </section>
+
+    <hr>
+
+    <section>
+        <h3>Status</h3>
+        <p id="status">Ready. Load your authenticated wallet records.</p>
+
+        <h3>Summary</h3>
+        <ul>
+            <li>Blocks: <strong id="chainLength">0</strong></li>
+            <li>Total Transactions: <strong id="txCount">0</strong></li>
+            <li>Latest Hash: <strong id="latestHash">-</strong></li>
+        </ul>
+
+        <h3>Notifications</h3>
+        <ul id="notificationsList"></ul>
+
+        <h3>Chain Records (Table)</h3>
+        <div id="chainTableContainer"></div>
+    </section>
+</main>
+
+<script src="../../assets/js/api.js?v=20260409a"></script>
+<script src="../../assets/js/blockchain.js?v=20260409a"></script>
+
+</body>
+</html>

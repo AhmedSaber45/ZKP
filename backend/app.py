@@ -17,8 +17,24 @@ from routes.identity_routes import identity_bp
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = False
 
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(
+    app,
+    resources={
+        r"/*": {
+            "origins": [
+                "http://127.0.0.1:8000",
+                "http://localhost:8000",
+                "http://localhost:8080",
+                "http://127.0.0.1:8080",
+            ]
+        }
+    },
+    supports_credentials=True,
+)
 
 # Add error handler to ensure CORS headers are sent on errors
 #@app.errorhandler(Exception)
@@ -37,6 +53,11 @@ def handle_http_error(error):
 def home():
     print("🔥 REQUEST RECEIVED")
     return jsonify({"message": "ZKP Backend API Running", "status": "Secure"})
+
+
+@app.route('/api/health')
+def health_check():
+    return jsonify({"status": "ok", "message": "Backend reachable"})
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(blockchain_bp, url_prefix='/api/blockchain')

@@ -58,3 +58,8 @@ If you use VS Code, you can install the **Live Server** extension and click the 
 
 ---
 *Note: Ensure the backend is running and properly configured in `assets/js/api.js` for full functionality.*
+
+clear cash 
+##############################
+###### ctrl + f5 #############
+##############################

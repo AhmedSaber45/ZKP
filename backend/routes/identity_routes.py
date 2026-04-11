@@ -37,3 +37,39 @@ def verify_identity():
         return jsonify({"verified": True}), 200
     else:
         return jsonify({"verified": False}), 404
+
+@identity_bp.route('/register_digital', methods=['POST'])
+def register_digital():
+    if not request.is_json:
+        return jsonify({"error": "Request body must be JSON"}), 400
+
+    data = request.get_json()
+
+    identity = data.get("identity")
+    if not identity or not isinstance(identity, str):
+        return jsonify({"error": "Field 'identity' is required and must be a string"}), 400
+
+    try:
+        from services.identity_service import register_identity
+        result = register_identity(identity)
+
+        conn = get_db_connection()
+        conn.execute('''CREATE TABLE IF NOT EXISTS digital_identities (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT,
+            identity_hash TEXT,
+            public_key TEXT
+        )''')
+        
+        conn.execute(
+            "INSERT INTO digital_identities (user_id, identity_hash, public_key) VALUES (?, ?, ?)",
+            (identity, result["identity_hash"], result["public_key"])
+        )
+
+        conn.commit()
+        conn.close()
+
+        return jsonify(result), 201
+
+    except Exception as e:
+        return jsonify({"error": "Failed to register identity", "details": str(e)}), 500

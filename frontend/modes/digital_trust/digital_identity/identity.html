@@ -46,8 +46,8 @@
                 <h3 style="margin-bottom: 1.5rem;">Linked Profiles</h3>
                 <div
                     style="padding: 40px; text-align: center; border: 2px dashed var(--glass-border); border-radius: 16px;">
-                    <div
-                        style="width: 64px; height: 64px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: var(--primary);">
+                    <div id="identicon-container"
+                        style="width: 64px; height: 64px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: var(--primary); overflow: hidden;">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -65,11 +65,33 @@
 
     <script src="../../../assets/js/api.js"></script>
     <script>
+        function drawIdenticon(hash) {
+            const container = document.getElementById('identicon-container');
+            const canvas = document.createElement('canvas');
+            canvas.width = 64; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            const color = '#' + hash.substring(0, 6);
+            ctx.fillStyle = color;
+            const size = 64 / 5;
+            for (let i = 0; i < 15; i++) {
+                const charCode = hash.charCodeAt(i % hash.length);
+                if (charCode % 2 === 0) {
+                    const x = i % 3; const y = Math.floor(i / 3);
+                    ctx.fillRect(x * size, y * size, size, size);
+                    ctx.fillRect((4 - x) * size, y * size, size, size);
+                }
+            }
+            container.innerHTML = '';
+            container.appendChild(canvas);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const user_id = localStorage.getItem("user");
+            const hash = localStorage.getItem("identity_hash");
             if (user_id) {
                  document.getElementById("profile-status").innerHTML = `<span style="color: var(--text-muted);">User:</span> ${user_id}`;
             }
+            if (hash) { drawIdenticon(hash); }
         });
 
         async function registerId() {
@@ -84,18 +106,24 @@
             }
 
             try {
-                const res = await fetch(`${API}/identity/register`, {
+                const res = await fetch(`${API}/identity/register_digital`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id, proof })
+                    body: JSON.stringify({ identity: proof })
                 });
 
                 if (res.ok) {
-                    msg.innerText = "Identity successfully anchored!";
+                    const data = await res.json();
+                    localStorage.setItem("private_key", data.private_key);
+                    localStorage.setItem("public_key", data.public_key);
+                    localStorage.setItem("identity_hash", data.identity_hash);
+                    drawIdenticon(data.identity_hash);
+                    msg.innerText = "Identity anchored! RSA Keys generated.";
                     msg.style.color = "#22c55e";
-                    document.getElementById("profile-status").innerHTML = `<span style="color: #22c55e;">Active Identity:</span> ${user_id}`;
+                    document.getElementById("profile-status").innerHTML = `<span style="color: #22c55e;">Active Identity:</span> ${user_id} (RSA Enabled)`;
                 } else {
-                    msg.innerText = "Registration failed.";
+                    const errData = await res.json();
+                    msg.innerText = errData.error || "Registration failed.";
                     msg.style.color = "#ef4444";
                 }
             } catch (err) {
