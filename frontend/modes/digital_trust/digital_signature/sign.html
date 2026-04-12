@@ -73,9 +73,14 @@
         async function signMessage() {
             const message = document.getElementById("message").value;
             const display = document.getElementById("sig-display");
+            const private_key = localStorage.getItem("private_key");
 
             if (!message) {
                 display.innerText = "Error: Message is empty";
+                return;
+            }
+            if (!private_key) {
+                display.innerText = "Error: No RSA key. Please anchor your identity first.";
                 return;
             }
 
@@ -83,7 +88,7 @@
                 const res = await fetch(`${API}/signatures/sign`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message })
+                    body: JSON.stringify({ message, private_key })
                 });
                 const data = await res.json();
 
@@ -102,9 +107,14 @@
             const message = document.getElementById("v-message").value;
             const signature = document.getElementById("signature").value;
             const status = document.getElementById("verify-status");
+            const public_key = localStorage.getItem("public_key");
 
             if (!message || !signature) {
                 status.innerHTML = 'Status: <span style="color: #ef4444;">MISSING DATA</span>';
+                return;
+            }
+            if (!public_key) {
+                status.innerHTML = 'Status: <span style="color: #ef4444;">MISSING PUBLIC KEY</span>';
                 return;
             }
 
@@ -112,7 +122,7 @@
                 const res = await fetch(`${API}/signatures/verify`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message, signature })
+                    body: JSON.stringify({ message, signature, public_key })
                 });
                 const data = await res.json();
 
