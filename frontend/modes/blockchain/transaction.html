@@ -1,69 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blockchain</title>
+    <title>Blockchain Ledger | ZKP Vault</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <script src="../../assets/js/layout.js"></script>
 </head>
+
 <body>
+    <div id="navbar-container"></div>
+    <div id="sidebar-container"></div>
 
-<main>
-    <h1>Blockchain Transactions</h1>
-    <p>
-        After login, your wallet is loaded from the server database and used for signed transactions.
-    </p>
+    <div class="content animate-fade-in">
+        <main>
+            <h1>Blockchain Transactions</h1>
+            <p>
+                After login, your wallet is loaded from the server database and used for signed transactions.
+            </p>
 
-    <section>
-        <h2>Your Wallet</h2>
-        <p id="status">Loading authenticated wallet...</p>
-        <p>Wallet address: <strong id="currentWallet">-</strong></p>
-        <p>Current balance: <strong id="currentBalance">0</strong></p>
-    </section>
+            <section>
+                <h2>Your Wallet</h2>
+                <p id="status">Loading authenticated wallet...</p>
+                <p>Wallet address: <strong id="currentWallet">-</strong></p>
+                <p>Current balance: <strong id="currentBalance">0</strong></p>
+            </section>
 
-    <hr>
+            <hr>
 
-    <section>
-        <h2>Step 1: Add Transaction</h2>
-        <p>The sender is your account wallet. The server signs and validates your transaction securely.</p>
+            <section>
+                <h2>Step 1: Add Transaction</h2>
+                <p>The sender is your account wallet. The server signs and validates your transaction securely.</p>
 
-        <label for="sender">Sender wallet address</label><br>
-        <input id="sender" placeholder="Loaded from account" readonly><br><br>
+                <label for="sender">Sender wallet address</label><br>
+                <input id="sender" placeholder="Loaded from account" readonly><br><br>
 
-        <label for="receiver">Receiver wallet address</label><br>
-        <input id="receiver" placeholder="e.g. 0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1098"><br><br>
+                <label for="receiver">Receiver wallet address</label><br>
+                <input id="receiver" placeholder="e.g. 0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1098"><br><br>
 
-        <label for="amount">Amount to transfer</label><br>
-        <input id="amount" type="number" min="0.0001" step="0.0001" placeholder="e.g. 25.5"><br><br>
+                <label for="amount">Amount to transfer</label><br>
+                <input id="amount" type="number" min="0.0001" step="0.0001" placeholder="e.g. 25.5"><br><br>
 
-        <label for="txData">Data (optional)</label><br>
-        <input id="txData" placeholder="e.g. invoice-2026-04"><br><br>
+                <label for="txData">Data (optional)</label><br>
+                <input id="txData" placeholder="e.g. invoice-2026-04"><br><br>
 
-        <button onclick="sendTransaction()">Add Transaction</button>
-    </section>
+                <button onclick="sendTransaction()">Add Transaction</button>
+            </section>
 
-    <hr>
+            <hr>
 
-    <section>
-        <h2>Step 2: Mine Block</h2>
-        <p>Leave miner empty to reward your own wallet automatically.</p>
+            <section>
+                <h2>Step 2: Mine Block</h2>
+                <p>Leave miner empty to reward your own wallet automatically.</p>
 
-        <label for="miner">Miner wallet address (optional)</label><br>
-        <input id="miner" placeholder="e.g. 0x1234abcd5678ef901234abcd5678ef901234abcd"><br><br>
+                <label for="miner">Miner wallet address (optional)</label><br>
+                <input id="miner" placeholder="e.g. 0x1234abcd5678ef901234abcd5678ef901234abcd"><br><br>
 
-        <button onclick="mineBlock()">Mine Block</button>
-    </section>
+                <button onclick="mineBlock()">Mine Block</button>
+            </section>
 
-    <hr>
+            <hr>
 
-    <section>
-        <h2>Step 3: Inspect Chain</h2>
-        <p>Open the chain viewer to inspect your own confirmed transactions, blocks, and notifications.</p>
-        <button type="button" onclick="window.location.href='chain.html'">Open Chain Viewer</button>
-    </section>
-</main>
+            <section>
+                <h2>Step 3: Inspect Chain</h2>
+                <p>Open the chain viewer to inspect your own confirmed transactions, blocks, and notifications.</p>
+                <button type="button" onclick="window.location.href='chain.html'">Open Chain Viewer</button>
+            </section>
+        </main>
+    </div>
 
-<script src="../../assets/js/api.js?v=20260409a"></script>
-<script src="../../assets/js/blockchain.js?v=20260409a"></script>
+    <div id="footer-container"></div>
 
+    <script src="../../assets/js/api.js?v=20260409a"></script>
+    <script src="../../assets/js/blockchain.js?v=20260409a"></script>
 </body>
+
 </html>
