@@ -1,8 +1,10 @@
-const API_BASE_URL = "http://localhost:5000/api";
+const API_HOST = window.location.hostname === "127.0.0.1" ? "127.0.0.1" : "localhost";
+const API_BASE_URL = `http://${API_HOST}:5000/api`;
 
 async function apiRequest(endpoint, method = "GET", data = null) {
     const options = {
         method: method,
+        credentials: "include",
         headers: {
             "Content-Type": "application/json"
         }
@@ -21,9 +23,11 @@ async function apiRequest(endpoint, method = "GET", data = null) {
     }
 }
 
+const API = API_BASE_URL;
+
 async function testBackend() {
     try {
-        const res = await fetch("http://localhost:5000/api/health");
+        const res = await fetch(`${API_BASE_URL}/health`);
         const data = await res.json();
         console.log("[API] Connection Status:", data.status === "ok" ? "Connected ✅" : "Issue ❌");
     } catch (err) {

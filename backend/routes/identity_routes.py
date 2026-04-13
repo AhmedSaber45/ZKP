@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
 import sqlite3
+from config import DB_PATH
 
 identity_bp = Blueprint('identity', __name__)
-DB_PATH = "database/zkp_auth.db"
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
