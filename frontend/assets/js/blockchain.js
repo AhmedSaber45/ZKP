@@ -10,22 +10,146 @@ function setStatus(message) {
 async function ensureAuthenticated() {
     try {
         const res = await apiRequest("/auth/me");
-        return res.status === "success";
+        const hasLocalUser = Boolean(localStorage.getItem("user"));
+        if (res.status !== "success") {
+            localStorage.removeItem("user");
+            return false;
+        }
+
+        return hasLocalUser;
     } catch (e) {
+        localStorage.removeItem("user");
         return false;
     }
 }
 
 function redirectToLogin(reason = "Please login first.") {
+    const loginUrl = (typeof getRelativePrefix === 'function' ? getRelativePrefix() : "../../") + "modes/authentication/login.html";
     showModal(
         "Session Required", 
         reason, 
         "info",
         {
             text: "Sign In",
-            url: (typeof getRelativePrefix === 'function' ? getRelativePrefix() : "../../") + "modes/authentication/login.html"
+            url: loginUrl
         }
     );
+
+    window.location.replace(loginUrl);
+}
+
+async function setupWalletPromptFlow() {
+    return new Promise((resolve) => {
+        const existingModal = document.getElementById("wallet-setup-modal");
+        if (existingModal) existingModal.remove();
+
+        const modalHtml = `
+            <div id="wallet-setup-modal" class="modal-backdrop active">
+                <div class="modal-card" style="max-width: 620px; width: calc(100% - 32px);">
+                    <div class="modal-header" style="align-items: flex-start; gap: 14px;">
+                        <div class="modal-icon info">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        </div>
+                        <div style="flex: 1;">
+                            <h3 class="modal-title" style="margin-bottom: 6px;">Wallet Setup Required</h3>
+                            <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin: 0;">This account is signed in, but no wallet is linked yet. Add your wallet details to continue.</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px; padding-top: 18px;">
+                        <div style="padding: 12px; border: 1px dashed var(--glass-border); border-radius: var(--radius-sm); background: rgba(59, 130, 246, 0.06);">
+                            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Example Wallet Address</div>
+                            <code style="color: var(--primary); font-size: 0.84rem; word-break: break-all;">0xA1b2C3d4E5f60718293aBcD4eF56789012345678</code>
+                        </div>
+
+                        <div>
+                            <label for="walletSetupAddress" style="display:block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Wallet Address</label>
+                            <input id="walletSetupAddress" placeholder="0x..." autocomplete="off">
+                        </div>
+
+                        <div>
+                            <label for="walletSetupBalance" style="display:block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Initial Balance (Optional)</label>
+                            <input id="walletSetupBalance" type="number" min="0" step="0.0001" placeholder="1000" value="1000">
+                        </div>
+
+                        <div id="walletSetupError" style="display:none; color: #ef4444; font-size: 0.82rem;"></div>
+                    </div>
+
+                    <div class="modal-footer" style="justify-content: space-between; gap: 10px;">
+                        <button id="walletSetupCancel" class="glass-btn" style="background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--glass-border);">Cancel</button>
+                        <button id="walletSetupSubmit" style="background: var(--primary);">Create Wallet</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML("beforeend", modalHtml);
+
+        const modalEl = document.getElementById("wallet-setup-modal");
+        const addressInputEl = document.getElementById("walletSetupAddress");
+        const balanceInputEl = document.getElementById("walletSetupBalance");
+        const errorEl = document.getElementById("walletSetupError");
+        const cancelBtnEl = document.getElementById("walletSetupCancel");
+        const submitBtnEl = document.getElementById("walletSetupSubmit");
+
+        function closeWith(result) {
+            if (modalEl) modalEl.remove();
+            resolve(result);
+        }
+
+        function showError(message) {
+            if (!errorEl) return;
+            errorEl.style.display = "block";
+            errorEl.textContent = message;
+        }
+
+        cancelBtnEl?.addEventListener("click", () => {
+            setStatus("Wallet setup cancelled.");
+            closeWith(null);
+        });
+
+        submitBtnEl?.addEventListener("click", async () => {
+            const walletAddress = String(addressInputEl?.value || "").trim();
+            const initialBalanceText = String(balanceInputEl?.value || "").trim();
+
+            if (!isValidWalletAddress(walletAddress)) {
+                showError("Wallet address must use 0x and 40 hexadecimal characters.");
+                return;
+            }
+
+            if (initialBalanceText && (Number.isNaN(Number(initialBalanceText)) || Number(initialBalanceText) < 0)) {
+                showError("Initial balance must be a valid non-negative number.");
+                return;
+            }
+
+            if (submitBtnEl) {
+                submitBtnEl.disabled = true;
+                submitBtnEl.textContent = "Creating...";
+            }
+
+            setStatus("Setting up secure wallet...");
+
+            const payload = { wallet_address: walletAddress };
+            if (initialBalanceText) {
+                payload.initial_balance = initialBalanceText;
+            }
+
+            const setupRes = await apiRequest("/blockchain/wallet/setup", "POST", payload);
+            if (setupRes.status !== "success" || !setupRes.wallet) {
+                if (submitBtnEl) {
+                    submitBtnEl.disabled = false;
+                    submitBtnEl.textContent = "Create Wallet";
+                }
+                showError(setupRes.message || "Unable to create wallet.");
+                setStatus("Wallet setup failed.");
+                return;
+            }
+
+            closeWith(setupRes.wallet);
+        });
+
+        addressInputEl?.focus();
+    });
 }
 
 async function loadMyWallet() {
@@ -41,15 +165,19 @@ async function loadMyWallet() {
 
     if (res.needsSetup) {
         showModal(
-            "Wallet Required", 
-            "It looks like you haven't set up a blockchain wallet yet. Please use the 'Create Identity' feature in the Authentication section to link a wallet to your account.", 
-            "info",
-            {
-                text: "Create Identity Now",
-                url: typeof getRelativePrefix === 'function' ? getRelativePrefix() + "modes/authentication/register.html" : "../authentication/register.html"
-            }
+            "Wallet Required",
+            "Before using blockchain mode, enter your wallet address and opening balance.",
+            "info"
         );
-        return null;
+
+        const createdWallet = await setupWalletPromptFlow();
+        if (!createdWallet) {
+            return null;
+        }
+
+        showModal("Wallet Ready", "Wallet created successfully. Blockchain mode is now unlocked.", "success");
+
+        return await loadMyWallet();
     }
 
     if (res.status !== "success" || !res.wallet) {
@@ -293,6 +421,13 @@ async function loadNotifications() {
 }
 
 window.addEventListener("load", async () => {
+    const isAuthenticated = await ensureAuthenticated();
+    if (!isAuthenticated) {
+        setStatus("Session expired.");
+        redirectToLogin("You must be signed in before entering blockchain mode.");
+        return;
+    }
+
     const wallet = await loadMyWallet();
     if (!wallet) return;
 
