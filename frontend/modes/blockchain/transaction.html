@@ -5,8 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blockchain Ledger | ZKP Vault</title>
-    <link rel="stylesheet" href="../../assets/css/main.css">
-    <script src="../../assets/js/layout.js"></script>
+    <link rel="stylesheet" href="../../assets/css/main.css?v=2">
+    <script src="../../assets/js/layout.js?v=2"></script>
+    <style>
+        .blockchain-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .blockchain-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+    </style>
 </head>
 
 <body>
@@ -14,60 +58,113 @@
     <div id="sidebar-container"></div>
 
     <div class="content animate-fade-in">
-        <main>
-            <h1>Blockchain Transactions</h1>
-            <p>
-                After login, your wallet is loaded from the server database and used for signed transactions.
-            </p>
+        <div class="page-header">
+            <div>
+                <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Blockchain <span style="color: var(--primary);">Assets</span></h1>
+                <p style="color: var(--text-muted);">Securely manage and verify ledger updates using zero-knowledge proofs.</p>
+            </div>
+            <div class="header-status">
+                <button onclick="window.location.href='chain.html'" class="glass-btn" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    Explorer
+                </button>
+            </div>
+        </div>
 
-            <section>
-                <h2>Your Wallet</h2>
-                <p id="status">Loading authenticated wallet...</p>
-                <p>Wallet address: <strong id="currentWallet">-</strong></p>
-                <p>Current balance: <strong id="currentBalance">0</strong></p>
-            </section>
+        <div class="blockchain-grid">
+            <!-- Left Column: Wallet & Status -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <div class="card">
+                    <div class="modal-header" style="margin-bottom: 1rem;">
+                        <div class="modal-icon info" style="width: 40px; height: 40px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        </div>
+                        <h3 class="modal-title">Secured Wallet</h3>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Your wallet identity is protected via SRP and ZKP validation.</p>
+                    
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                        <label class="stat-label">Wallet Address</label>
+                        <code id="currentWallet" style="word-break: break-all; color: var(--primary); font-size: 0.85rem;">-</code>
+                    </div>
 
-            <hr>
+                    <div class="stat-group">
+                        <div class="stat-item">
+                            <span class="stat-label">Balance</span>
+                            <span class="stat-value" id="currentBalance">0.0000</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Currency</span>
+                            <span class="stat-value">ZKP</span>
+                        </div>
+                    </div>
 
-            <section>
-                <h2>Step 1: Add Transaction</h2>
-                <p>The sender is your account wallet. The server signs and validates your transaction securely.</p>
+                    <div style="margin-top: 1.5rem; padding: 10px; background: rgba(34, 197, 94, 0.05); border-radius: var(--radius-sm); border: 1px dashed rgba(34, 197, 94, 0.3); text-align: center;">
+                        <span id="status" style="font-size: 0.75rem; color: #22c55e; font-weight: 600;">System ready</span>
+                    </div>
+                </div>
 
-                <label for="sender">Sender wallet address</label><br>
-                <input id="sender" placeholder="Loaded from account" readonly><br><br>
+                <div class="card" style="border-left: 4px solid var(--accent);">
+                    <div class="modal-header" style="margin-bottom: 1rem;">
+                        <div class="modal-icon info" style="width: 40px; height: 40px; color: var(--accent); background: rgba(6, 182, 212, 0.1);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        </div>
+                        <h3 class="modal-title">Mining Console</h3>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Confirm pending transactions by mining a new block.</p>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Miner Reward Address</label>
+                        <input id="miner" placeholder="Leave empty for self-reward">
+                    </div>
 
-                <label for="receiver">Receiver wallet address</label><br>
-                <input id="receiver" placeholder="e.g. 0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1098"><br><br>
+                    <button onclick="mineBlock()" style="width: 100%; justify-content: center; background: var(--accent);">
+                        Commit & Mine Block
+                    </button>
+                </div>
+            </div>
 
-                <label for="amount">Amount to transfer</label><br>
-                <input id="amount" type="number" min="0.0001" step="0.0001" placeholder="e.g. 25.5"><br><br>
+            <!-- Right Column: Transaction Form -->
+            <div class="card">
+                <div class="modal-header" style="margin-bottom: 1.5rem;">
+                    <div class="modal-icon success" style="width: 44px; height: 44px;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </div>
+                    <div>
+                        <h3 class="modal-title">New Transaction</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">The server signs and validates your request securely.</p>
+                    </div>
+                </div>
 
-                <label for="txData">Data (optional)</label><br>
-                <input id="txData" placeholder="e.g. invoice-2026-04"><br><br>
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Sender (Your Wallet)</label>
+                        <input id="sender" readonly style="opacity: 0.7; background: rgba(0,0,0,0.1);">
+                    </div>
 
-                <button onclick="sendTransaction()">Add Transaction</button>
-            </section>
+                    <div>
+                        <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Recipient Address</label>
+                        <input id="receiver" placeholder="0x...">
+                    </div>
 
-            <hr>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Amount</label>
+                            <input id="amount" type="number" step="0.0001" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Reference</label>
+                            <input id="txData" placeholder="Optional tag">
+                        </div>
+                    </div>
 
-            <section>
-                <h2>Step 2: Mine Block</h2>
-                <p>Leave miner empty to reward your own wallet automatically.</p>
-
-                <label for="miner">Miner wallet address (optional)</label><br>
-                <input id="miner" placeholder="e.g. 0x1234abcd5678ef901234abcd5678ef901234abcd"><br><br>
-
-                <button onclick="mineBlock()">Mine Block</button>
-            </section>
-
-            <hr>
-
-            <section>
-                <h2>Step 3: Inspect Chain</h2>
-                <p>Open the chain viewer to inspect your own confirmed transactions, blocks, and notifications.</p>
-                <button type="button" onclick="window.location.href='chain.html'">Open Chain Viewer</button>
-            </section>
-        </main>
+                    <button onclick="sendTransaction()" style="width: 100%; justify-content: center; padding: 16px; margin-top: 1rem;">
+                        Execute Secure Transfer
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="footer-container"></div>

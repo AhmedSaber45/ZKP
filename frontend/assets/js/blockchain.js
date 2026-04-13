@@ -8,71 +8,52 @@ function setStatus(message) {
 }
 
 async function ensureAuthenticated() {
-    const res = await apiRequest("/auth/me");
-    return res.status === "success";
+    try {
+        const res = await apiRequest("/auth/me");
+        return res.status === "success";
+    } catch (e) {
+        return false;
+    }
 }
 
 function redirectToLogin(reason = "Please login first.") {
-    alert(reason);
-    window.location.href = "../authentication/login.html";
+    showModal(
+        "Session Required", 
+        reason, 
+        "info",
+        {
+            text: "Sign In",
+            url: (typeof getRelativePrefix === 'function' ? getRelativePrefix() : "../../") + "modes/authentication/login.html"
+        }
+    );
 }
 
 async function loadMyWallet() {
     const authenticated = await ensureAuthenticated();
     if (!authenticated) {
-        setStatus("You are not logged in. Please login first.");
-        redirectToLogin("You are signed out. Please login to access Blockchain.");
+        setStatus("Session expired.");
+        redirectToLogin("You must be signed in to access blockchain features.");
         return null;
     }
 
-    setStatus("Loading your wallet from database...");
+    setStatus("Loading secure wallet...");
     const res = await apiRequest("/blockchain/wallet");
 
     if (res.needsSetup) {
-        while (true) {
-            const enteredWallet = prompt("First blockchain access: Enter your wallet address (0x + 40 hex characters)");
-            if (enteredWallet === null) {
-                setStatus("Wallet setup cancelled.");
-                return null;
+        showModal(
+            "Wallet Required", 
+            "It looks like you haven't set up a blockchain wallet yet. Please use the 'Create Identity' feature in the Authentication section to link a wallet to your account.", 
+            "info",
+            {
+                text: "Create Identity Now",
+                url: typeof getRelativePrefix === 'function' ? getRelativePrefix() + "modes/authentication/register.html" : "../authentication/register.html"
             }
-
-            const walletAddress = String(enteredWallet || "").trim().toLowerCase();
-            if (!isValidWalletAddress(walletAddress)) {
-                setStatus("Wallet format invalid. Use 0x + 40 hex characters.");
-                continue;
-            }
-
-            const enteredBalance = prompt("Enter your initial balance (example: 1000)");
-            if (enteredBalance === null) {
-                setStatus("Wallet setup cancelled.");
-                return null;
-            }
-
-            const initialBalance = String(enteredBalance || "").trim();
-            if (initialBalance === "" || Number.isNaN(Number(initialBalance)) || Number(initialBalance) < 0) {
-                setStatus("Initial balance must be a non-negative number.");
-                continue;
-            }
-
-            const setupRes = await apiRequest("/blockchain/wallet/setup", "POST", {
-                wallet_address: walletAddress,
-                initial_balance: initialBalance,
-            });
-
-            if (setupRes.status === "success") {
-                setStatus("Wallet setup completed.");
-                return await loadMyWallet();
-            }
-
-            setStatus(setupRes.message || "Wallet setup failed. Try again.");
-        }
+        );
+        return null;
     }
 
     if (res.status !== "success" || !res.wallet) {
-        setStatus(res.message || "Please login first.");
-        if ((res.message || "").toLowerCase().includes("login") || (res.message || "").toLowerCase().includes("auth")) {
-            redirectToLogin("Your session expired. Please login again.");
-        }
+        setStatus(res.message || "Initialization failed.");
         return null;
     }
 
@@ -89,7 +70,7 @@ async function loadMyWallet() {
     const balanceEl = document.getElementById("currentBalance");
     if (balanceEl) balanceEl.textContent = Number(res.wallet.balance || 0).toFixed(4);
 
-    setStatus("Wallet loaded.");
+    setStatus("Wallet verified.");
     return res.wallet;
 }
 
@@ -104,7 +85,7 @@ function updateSummary(chainData) {
 
     if (chainLengthEl) chainLengthEl.textContent = String(chainData.length || 0);
     if (txCountEl) txCountEl.textContent = String(chainData.transactionCount ?? totalTx);
-    if (latestHashEl) latestHashEl.textContent = latestBlock?.hash ? `${latestBlock.hash.slice(0, 18)}...` : "-";
+    if (latestHashEl) latestHashEl.textContent = latestBlock?.hash ? `${latestBlock.hash.slice(0, 10)}...` : "-";
 }
 
 function renderNotifications(notifications) {
@@ -114,9 +95,16 @@ function renderNotifications(notifications) {
     const safeItems = Array.isArray(notifications) ? notifications : [];
     listEl.innerHTML = safeItems.length
         ? safeItems
-            .map((item) => `<li>[${item.created_at}] ${item.message}</li>`)
+            .map((item) => `
+                <div class="notification-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary); margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-weight: 500;">${item.message}</span>
+                        <span class="notification-time">${item.created_at}</span>
+                    </div>
+                </div>`)
             .join("")
-        : "<li>No notifications yet.</li>";
+        : '<p style="color: var(--text-muted); padding: 10px; font-size: 0.85rem;">No recent activity.</p>';
 }
 
 function renderChainTable(chainData) {
@@ -143,7 +131,7 @@ function renderChainTable(chainData) {
     }
 
     if (!rows.length) {
-        container.innerHTML = "<p>No records found for your wallet.</p>";
+        container.innerHTML = '<p style="padding: 20px; color: var(--text-muted);">No records found in the ledger.</p>';
         return;
     }
 
@@ -151,24 +139,24 @@ function renderChainTable(chainData) {
         .map(
             (row) =>
                 `<tr>
-                    <td>${row.blockIndex}</td>
-                    <td>${row.txId}</td>
-                    <td>${row.sender}</td>
-                    <td>${row.receiver}</td>
-                    <td>${row.amount}</td>
-                    <td>${row.timestamp}</td>
+                    <td><span class="badge" style="background: rgba(59,130,246,0.1); color: var(--primary); font-family: monospace;">#${row.blockIndex}</span></td>
+                    <td class="hash-cell">${row.txId.slice(0, 12)}...</td>
+                    <td style="font-size: 0.75rem; opacity: 0.8;">${row.sender.slice(0, 8)}...</td>
+                    <td style="font-size: 0.75rem; opacity: 0.8;">${row.receiver.slice(0, 8)}...</td>
+                    <td class="amount-cell">${row.amount} <span style="font-size: 0.6rem; color: var(--text-muted);">ZKP</span></td>
+                    <td style="font-size: 0.7rem; color: var(--text-muted);">${row.timestamp}</td>
                 </tr>`
         )
         .join("");
 
     container.innerHTML = `
-        <table border="1" cellspacing="0" cellpadding="8">
+        <table>
             <thead>
                 <tr>
                     <th>Block</th>
-                    <th>Transaction ID</th>
+                    <th>TX Hash</th>
                     <th>Sender</th>
-                    <th>Receiver</th>
+                    <th>Recipient</th>
                     <th>Amount</th>
                     <th>Timestamp</th>
                 </tr>
@@ -193,37 +181,42 @@ async function sendTransaction() {
     const amount = Number(amountText);
 
     if (!sender || !receiver || !amountText) {
-        setStatus("Please complete sender, receiver, and amount.");
+        showModal("Invalid Input", "Please fill in all transaction details.", "error");
         return;
     }
 
     if (!isValidWalletAddress(sender) || !isValidWalletAddress(receiver)) {
-        setStatus("Wallet addresses must match 0x + 40 hex format.");
+        showModal("Address Error", "Wallet addresses must be in 0x format (40 hex characters).", "error");
         return;
     }
 
     if (Number.isNaN(amount) || amount <= 0) {
-        setStatus("Amount must be a valid number greater than zero.");
+        showModal("Amount Error", "Please enter a valid amount greater than zero.", "error");
         return;
     }
 
-    setStatus("Creating secure transaction...");
-    const res = await apiRequest("/blockchain/transaction", "POST", {
-        receiver,
-        amount: amountText,
-        data,
-    });
+    setStatus("Encrypting transaction...");
+    try {
+        const res = await apiRequest("/blockchain/transaction", "POST", {
+            receiver,
+            amount: amountText,
+            data,
+        });
 
-    if (res.status !== "success" || !res.transaction) {
-        setStatus(res.message || "Transaction creation failed.");
-        return;
+        if (res.status !== "success" || !res.transaction) {
+            showModal("Encryption Failed", res.message || "Could not process transaction.", "error");
+            setStatus("Transaction failed.");
+            return;
+        }
+
+        showModal("Success", `Transaction ${res.transaction.id.slice(0,10)}... broadcasted to pending pool.`, "success");
+        if (receiverEl) receiverEl.value = "";
+        if (amountEl) amountEl.value = "";
+        if (dataEl) dataEl.value = "";
+        await loadMyWallet();
+    } catch (e) {
+        showModal("Network Error", "Unable to reach blockchain API.", "error");
     }
-
-    setStatus(`Transaction ${res.transaction.id} created and added to pending pool.`);
-    if (receiverEl) receiverEl.value = "";
-    if (amountEl) amountEl.value = "";
-    if (dataEl) dataEl.value = "";
-    await loadMyWallet();
 }
 
 async function mineBlock() {
@@ -231,67 +224,77 @@ async function mineBlock() {
     const miner = String(minerEl?.value || "").trim();
 
     if (miner && !isValidWalletAddress(miner)) {
-        setStatus("Miner wallet address is invalid.");
+        showModal("Invalid Miner", "Miner wallet address format is incorrect.", "error");
         return;
     }
 
-    setStatus("Mining block and confirming pending transactions...");
-    const res = await apiRequest("/blockchain/mine", "POST", { miner });
+    setStatus("Mining block...");
+    try {
+        const res = await apiRequest("/blockchain/mine", "POST", { miner });
 
-    if (res.status !== "success" || !res.block) {
-        setStatus(res.message || "Mining failed.");
-        return;
+        if (res.status !== "success" || !res.block) {
+            showModal("Mining Error", res.message || "Failed to mine block.", "error");
+            setStatus("Mining abandoned.");
+            return;
+        }
+
+        showModal("Block Mined", `Block #${res.block.index} successfully integrated into chain.`, "success");
+        await loadMyWallet();
+    } catch (e) {
+        showModal("Network Error", "Unable to reach blockchain API.", "error");
     }
-
-    setStatus(`Block #${res.block.index} mined successfully.`);
-    await loadMyWallet();
 }
 
 async function getChain() {
-    setStatus("Loading your blockchain records...");
-    const res = await apiRequest("/blockchain/chain");
-    const tableContainer = document.getElementById("chainTableContainer");
+    setStatus("Loading ledger...");
+    try {
+        const res = await apiRequest("/blockchain/chain");
+        const tableContainer = document.getElementById("chainTableContainer");
 
-    if (!res.chain || !tableContainer) {
-        setStatus(res.message || "Failed to load chain.");
-        return;
+        if (!res.chain || !tableContainer) {
+            setStatus("Sync error.");
+            return;
+        }
+
+        renderChainTable(res);
+        updateSummary(res);
+        setStatus("Ledger synced.");
+    } catch (e) {
+        setStatus("Network error.");
     }
-
-    renderChainTable(res);
-    updateSummary(res);
-    setStatus("Your records loaded.");
 }
 
 async function validateChain() {
-    setStatus("Validating blockchain integrity...");
-    const res = await apiRequest("/blockchain/validate");
+    setStatus("Auditing chain...");
+    try {
+        const res = await apiRequest("/blockchain/validate");
 
-    if (typeof res.valid !== "boolean") {
-        setStatus(res.message || "Validation failed.");
-        return;
+        if (typeof res.valid !== "boolean") {
+            showModal("Audit Failed", res.message || "Validation technical error.", "error");
+            return;
+        }
+
+        if (res.valid) {
+            showModal("Integrity Verified", "The blockchain database is valid and untampered.", "success");
+        } else {
+            showModal("Security Alert", "Blockchain integrity compromised! Data tampered.", "error");
+        }
+    } catch (e) {
+        showModal("Audit Error", "Unable to perform chain validation.", "error");
     }
-
-    setStatus(res.valid ? "Chain is valid." : "Chain is invalid.");
 }
 
 async function loadNotifications() {
-    const listEl = document.getElementById("notificationsList");
-    if (!listEl) return;
-
-    const res = await apiRequest("/blockchain/notifications");
-    if (res.status !== "success") {
-        setStatus(res.message || "Failed to load notifications.");
-        return;
-    }
-
-    renderNotifications(res.notifications || []);
+    try {
+        const res = await apiRequest("/blockchain/notifications");
+        if (res.status !== "success") return;
+        renderNotifications(res.notifications || []);
+    } catch (e) {}
 }
 
 window.addEventListener("load", async () => {
     const wallet = await loadMyWallet();
-    if (!wallet) {
-        return;
-    }
+    if (!wallet) return;
 
     if (document.getElementById("chainTableContainer")) {
         await getChain();

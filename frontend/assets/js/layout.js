@@ -206,4 +206,65 @@ function logout() {
     window.addEventListener('scroll', handleScroll, { passive: true });
 })();
 
+// --- Global Modal Utility ---
+function showModal(title, message, type = 'info', action = null) {
+    // Remove existing modal if any
+    let existingModal = document.getElementById('global-modal');
+    if (existingModal) existingModal.remove();
+
+    const icons = {
+        success: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
+        error: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
+        info: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`
+    };
+
+    let actionBtnHTML = '';
+    if (action && action.text) {
+        const onclickAttr = action.url 
+            ? `onclick="window.location.href='${action.url}'"` 
+            : (action.callback ? `onclick="${action.callback}"` : '');
+        actionBtnHTML = `<button ${onclickAttr} style="background: var(--primary);">${action.text}</button>`;
+    }
+
+    const modalHTML = `
+    <div id="global-modal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-icon ${type}">${icons[type] || icons.info}</div>
+                <h3 class="modal-title">${title}</h3>
+            </div>
+            <div class="modal-body">${message}</div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" class="glass-btn" style="background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--glass-border);">Dismiss</button>
+                ${actionBtnHTML}
+            </div>
+        </div>
+    </div>`;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Small delay to trigger animation
+    setTimeout(() => {
+        const modal = document.getElementById('global-modal');
+        if (modal) modal.classList.add('active');
+    }, 10);
+
+    // Close on ESC
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+}
+
+function closeModal() {
+    const modal = document.getElementById('global-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
+    }
+}
+
 
