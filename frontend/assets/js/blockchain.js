@@ -235,11 +235,66 @@ function renderNotifications(notifications) {
         : '<p style="color: var(--text-muted); padding: 10px; font-size: 0.85rem;">No recent activity.</p>';
 }
 
+function compactText(value, start = 10, end = 6) {
+    const text = String(value || "");
+    if (!text) return "-";
+    if (text.length <= start + end + 3) return text;
+    return `${text.slice(0, start)}...${text.slice(-end)}`;
+}
+
+function parseIsoDate(value) {
+    const date = new Date(String(value || ""));
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function toRelativeTime(date) {
+    const diffMs = Date.now() - date.getTime();
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+
+    if (diffMs < minute) return "just now";
+    if (diffMs < hour) {
+        const mins = Math.round(diffMs / minute);
+        return `${mins} min${mins === 1 ? "" : "s"} ago`;
+    }
+    if (diffMs < day) {
+        const hours = Math.round(diffMs / hour);
+        return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+    }
+    const days = Math.round(diffMs / day);
+    return `${days} day${days === 1 ? "" : "s"} ago`;
+}
+
+function formatReadableTime(value) {
+    const date = parseIsoDate(value);
+    if (!date) {
+        return {
+            label: String(value || "-"),
+            relative: "",
+            title: String(value || "-")
+        };
+    }
+
+    return {
+        label: date.toLocaleString([], {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        }),
+        relative: toRelativeTime(date),
+        title: date.toISOString()
+    };
+}
+
 function renderChainTable(chainData) {
     const container = document.getElementById("chainTableContainer");
     if (!container) return;
 
     const chain = Array.isArray(chainData?.chain) ? chainData.chain : [];
+    const wallet = String(chainData?.wallet || "").trim().toLowerCase();
     const rows = [];
 
     for (const block of chain) {
@@ -247,13 +302,20 @@ function renderChainTable(chainData) {
         const txs = Array.isArray(block?.transactions) ? block.transactions : [];
 
         for (const tx of txs) {
+            const sender = String(tx?.sender || "-");
+            const receiver = String(tx?.receiver || "-");
+            const timestamp = tx?.timestamp || block?.timestamp || "-";
+            const incoming = wallet && receiver.toLowerCase() === wallet;
+
             rows.push({
                 blockIndex,
                 txId: tx?.id || "-",
-                sender: tx?.sender || "-",
-                receiver: tx?.receiver || "-",
+                sender,
+                receiver,
+                flow: incoming ? "Incoming" : "Outgoing",
                 amount: tx?.amount_text || String(tx?.amount ?? "-"),
-                timestamp: tx?.timestamp || block?.timestamp || "-",
+                timestamp,
+                sortTime: parseIsoDate(timestamp)?.getTime() || 0
             });
         }
     }
@@ -263,37 +325,46 @@ function renderChainTable(chainData) {
         return;
     }
 
-    const tableRows = rows
-        .map(
-            (row) =>
-                `<tr>
-                    <td><span class="badge" style="background: rgba(59,130,246,0.1); color: var(--primary); font-family: monospace;">#${row.blockIndex}</span></td>
-                    <td class="hash-cell">${row.txId.slice(0, 12)}...</td>
-                    <td style="font-size: 0.75rem; opacity: 0.8;">${row.sender.slice(0, 8)}...</td>
-                    <td style="font-size: 0.75rem; opacity: 0.8;">${row.receiver.slice(0, 8)}...</td>
-                    <td class="amount-cell">${row.amount} <span style="font-size: 0.6rem; color: var(--text-muted);">ZKP</span></td>
-                    <td style="font-size: 0.7rem; color: var(--text-muted);">${row.timestamp}</td>
-                </tr>`
-        )
+    const cards = rows
+        .sort((a, b) => b.sortTime - a.sortTime)
+        .map((row) => {
+            const time = formatReadableTime(row.timestamp);
+            const isIncoming = row.flow === "Incoming";
+
+            return `
+                <article class="ledger-card">
+                    <div class="ledger-card-header">
+                        <span class="badge" style="background: rgba(59,130,246,0.12); color: var(--primary);">Block #${row.blockIndex}</span>
+                        <span class="ledger-flow ${isIncoming ? "incoming" : "outgoing"}">${row.flow}</span>
+                    </div>
+
+                    <div class="ledger-hash" title="${row.txId}">TX ${compactText(row.txId, 14, 8)}</div>
+
+                    <div class="ledger-grid">
+                        <div class="ledger-item">
+                            <span class="ledger-label">Sender</span>
+                            <span class="ledger-value mono" title="${row.sender}">${compactText(row.sender, 12, 8)}</span>
+                        </div>
+                        <div class="ledger-item">
+                            <span class="ledger-label">Recipient</span>
+                            <span class="ledger-value mono" title="${row.receiver}">${compactText(row.receiver, 12, 8)}</span>
+                        </div>
+                        <div class="ledger-item">
+                            <span class="ledger-label">Amount</span>
+                            <span class="ledger-value amount ${isIncoming ? "incoming" : "outgoing"}">${row.amount} <small>ZKP</small></span>
+                        </div>
+                        <div class="ledger-item">
+                            <span class="ledger-label">Time</span>
+                            <span class="ledger-value" title="${time.title}">${time.label}</span>
+                            <span class="ledger-subvalue">${time.relative}</span>
+                        </div>
+                    </div>
+                </article>
+            `;
+        })
         .join("");
 
-    container.innerHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Block</th>
-                    <th>TX Hash</th>
-                    <th>Sender</th>
-                    <th>Recipient</th>
-                    <th>Amount</th>
-                    <th>Timestamp</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${tableRows}
-            </tbody>
-        </table>
-    `;
+    container.innerHTML = `<div class="ledger-card-list">${cards}</div>`;
 }
 
 async function sendTransaction() {
