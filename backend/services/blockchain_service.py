@@ -13,6 +13,7 @@ from utils.blockchain_crypto import (
     sign_transaction_payload,
     verify_transaction_signature,
 )
+from utils.blockchain_data_cipher import decrypt_transaction_data, encrypt_transaction_data
 from utils.validators import is_valid_wallet_address
 
 DIFFICULTY_PREFIX = "0000"
@@ -251,7 +252,7 @@ class Blockchain:
 
     def create_signed_transaction(self, sender_user_email, receiver_wallet, amount, data=""):
         receiver_wallet = normalize_wallet_address(receiver_wallet)
-        data = str(data or "").strip()
+        data_plaintext = str(data or "").strip()
         amount_value = float(amount)
 
         if amount_value <= 0:
@@ -277,12 +278,13 @@ class Blockchain:
                 raise ValueError("Insufficient balance")
 
             amount_text = f"{amount_value:.8f}".rstrip("0").rstrip(".")
+            encrypted_data = encrypt_transaction_data(data_plaintext)
             signature = sign_transaction_payload(
                 sender_wallet["private_key_b64"],
                 sender_address,
                 receiver_wallet,
                 amount_text,
-                data,
+                encrypted_data,
             )
 
             ok, error_message, _ = verify_transaction_signature(
@@ -291,7 +293,7 @@ class Blockchain:
                 amount_text,
                 signature,
                 sender_wallet["public_key_b64"],
-                data=data,
+                data=encrypted_data,
             )
             if not ok:
                 raise ValueError(error_message or "Invalid transaction signature")
@@ -312,7 +314,7 @@ class Blockchain:
                     receiver_wallet,
                     amount_value,
                     amount_text,
-                    data,
+                    encrypted_data,
                     signature,
                     sender_wallet["public_key_b64"],
                     created_at,
@@ -340,7 +342,7 @@ class Blockchain:
                 "receiver": receiver_wallet,
                 "amount": amount_value,
                 "amount_text": amount_text,
-                "data": data,
+                "data": encrypted_data,
                 "signature": signature,
                 "public_key": sender_wallet["public_key_b64"],
                 "status": "pending",
@@ -511,6 +513,25 @@ class Blockchain:
                 block["transactions"] = matching_transactions
                 filtered_chain.append(block)
         return filtered_chain
+
+    def get_wallet_chain_view(self, wallet_address):
+        wallet_address = normalize_wallet_address(wallet_address)
+        chain = self.get_wallet_chain(wallet_address)
+
+        for block in chain:
+            for tx in block.get("transactions", []):
+                raw_data = tx.get("data", "")
+                tx["data_encrypted"] = bool(str(raw_data).startswith("enc:"))
+                if not raw_data:
+                    tx["data_plaintext"] = ""
+                    continue
+
+                try:
+                    tx["data_plaintext"] = decrypt_transaction_data(raw_data)
+                except Exception:
+                    tx["data_plaintext"] = "[encrypted-unavailable]"
+
+        return chain
 
     def get_wallet_transaction_count(self, wallet_address):
         wallet_address = normalize_wallet_address(wallet_address)

@@ -33,6 +33,16 @@ The easiest way to run the entire project (Frontend, Backend, and Database) is u
 
 ---
 
+## Blockchain Mode Encryption Notes
+
+Blockchain mode encrypts transaction `data` using **AES-256-GCM** before it is signed and stored.
+
+- Environment variable: `BLOCKCHAIN_DATA_AES_KEY`
+- Value format: base64-encoded 32-byte key
+- If not set, backend derives a fallback key from `SECRET_KEY` (acceptable for development, not recommended for production)
+
+---
+
 ## Local Setup (Alternative)
 
 To run the frontend of this project locally, you need a simple HTTP server. Follow one of the methods below:

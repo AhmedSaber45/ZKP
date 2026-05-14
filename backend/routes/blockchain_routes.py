@@ -133,7 +133,7 @@ def get_chain():
     if not wallet:
         return jsonify({"status": "error", "message": "Wallet setup required", "needsSetup": True}), 404
     wallet_address = wallet["wallet_address"]
-    wallet_chain = blockchain.get_wallet_chain(wallet_address)
+    wallet_chain = blockchain.get_wallet_chain_view(wallet_address)
     return jsonify(
         {
             "wallet": wallet_address,

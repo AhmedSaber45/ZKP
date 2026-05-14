@@ -1,3 +1,23 @@
+function isValidEmail(email) {
+    return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(String(email || "").trim());
+}
+
+function evaluatePasswordStrength(password) {
+    const value = String(password || "");
+    return {
+        minLength: value.length >= 8,
+        hasLower: /[a-z]/.test(value),
+        hasUpper: /[A-Z]/.test(value),
+        hasDigit: /\d/.test(value),
+        hasSpecial: /[^A-Za-z0-9]/.test(value),
+    };
+}
+
+function isStrongPassword(password) {
+    const checks = evaluatePasswordStrength(password);
+    return checks.minLength && checks.hasLower && checks.hasUpper && checks.hasDigit && checks.hasSpecial;
+}
+
 async function register(event) {
     if (event) {
         AuthUI.preventEvent(event);
@@ -10,6 +30,17 @@ async function register(event) {
     
     if (!email || !password) {
         alert("Email and password are required.");
+        return;
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!isValidEmail(normalizedEmail)) {
+        alert("Please enter a valid email address.");
+        return;
+    }
+
+    if (!isStrongPassword(password)) {
+        alert("Password must be at least 8 characters and include uppercase, lowercase, number, and special character.");
         return;
     }
 
@@ -26,7 +57,7 @@ async function register(event) {
         // Step 1: Check if email already exists
         logger.append("Checking email availability on the server...");
         const checkResult = await apiRequest("/auth/register/check", "POST", {
-            email: email.trim().toLowerCase()
+            email: normalizedEmail
         });
 
         if (checkResult.status !== "success") {
@@ -44,7 +75,7 @@ async function register(event) {
         }
 
         // Step 2: Generate SRP registration payload (Client-side ZKP part)
-        const payload = await SRPAuth.buildRegistrationPayload(email, password, {
+        const payload = await SRPAuth.buildRegistrationPayload(normalizedEmail, password, {
             onStep: (msg) => {
                 logger.append(msg);
                 logArea.scrollTop = logArea.scrollHeight;

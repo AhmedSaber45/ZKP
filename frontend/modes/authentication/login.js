@@ -1,3 +1,23 @@
+function isValidEmail(email) {
+    return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(String(email || "").trim());
+}
+
+function evaluatePasswordStrength(password) {
+    const value = String(password || "");
+    return {
+        minLength: value.length >= 8,
+        hasLower: /[a-z]/.test(value),
+        hasUpper: /[A-Z]/.test(value),
+        hasDigit: /\d/.test(value),
+        hasSpecial: /[^A-Za-z0-9]/.test(value),
+    };
+}
+
+function isStrongPassword(password) {
+    const checks = evaluatePasswordStrength(password);
+    return checks.minLength && checks.hasLower && checks.hasUpper && checks.hasDigit && checks.hasSpecial;
+}
+
 async function login(event) {
     if (event) {
         AuthUI.preventEvent(event);
@@ -13,6 +33,17 @@ async function login(event) {
         return;
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!isValidEmail(normalizedEmail)) {
+        alert("Please enter a valid email address.");
+        return;
+    }
+
+    if (!isStrongPassword(password)) {
+        alert("Please enter a strong password (8+ chars with uppercase, lowercase, number, and special character).");
+        return;
+    }
+
     // Show log area and disable button
     logArea.style.display = "block";
     loginBtn.disabled = true;
@@ -23,7 +54,7 @@ async function login(event) {
     logger.append("Initiating SRP Secure Handshake...");
 
     try {
-        const result = await SRPAuth.login(email, password, {
+        const result = await SRPAuth.login(normalizedEmail, password, {
             onStep: (msg, isError) => {
                 logger.append(msg, isError);
                 // Auto-scroll log area
@@ -33,7 +64,7 @@ async function login(event) {
 
         if (result.status === "success") {
             logger.append("Authentication Verified. Secure session established!");
-            localStorage.setItem("user", email.split('@')[0]); // Use part of email as username
+            localStorage.setItem("user", normalizedEmail.split('@')[0]); // Use part of email as username
 
             const sessionCheck = await apiRequest("/auth/me");
             if (sessionCheck.status !== "success") {
