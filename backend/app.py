@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from config import SECRET_KEY
 from routes.auth_routes import auth_bp
 from routes.blockchain_routes import blockchain_bp
-from routes.voting_routes import voting_bp
+from routes.voting_routes import voting_bp 
 from routes.identity_routes import identity_bp
 
 app = Flask(__name__)
@@ -35,6 +35,13 @@ CORS(
     },
     supports_credentials=True,
 )
+from database.init_db import init_db
+
+with app.app_context():
+    init_db()
+
+
+
 
 # Add error handler to ensure CORS headers are sent on errors
 #@app.errorhandler(Exception)

@@ -10,11 +10,7 @@ services:
     image: hagarmo/backend
     ports:
       - "5000:5000"
-    volumes:
-      - db_data:/app/database
     environment:
       - DB_PATH=/app/database/zkp_auth.db
     restart: always
 
-volumes:
-  db_data:
